@@ -9,5 +9,5 @@
 #define change_to_user_h
 #include "include.h"
 
-int change_to_user (const char *szUserName);
+void change_to_user (const char *szUserName);
 #endif // !change_to_user_h
