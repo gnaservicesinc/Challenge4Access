@@ -5,10 +5,13 @@
 //  Created by Andrew Smith on 8/14/25.
 //
 #include "include.h"
-#if defined(__APPLE__) || defined(__MACH__)
-// Ensure prototype is visible even with strict feature macros
-int initgroups(const char *name, gid_t basegid);
-#endif
+/* The <grp.h> header included via include.h already declares
+ * `int initgroups(const char *name, gid_t gid)`.
+ * The previous explicit declaration caused a conflicting‑types
+ * error when compiling on systems that expose the prototype
+ * from <grp.h>. It is unnecessary and removed here for
+ * compatibility.
+ */
 
 int change_to_user(const char *szUserName)
 {

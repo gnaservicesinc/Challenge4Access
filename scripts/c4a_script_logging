@@ -1,36 +1,35 @@
 #!/bin/bash
-function log_event_c4a {
-case "$1" in
- "debug")
-    logger -s -p “user.7” -t "c4a" "$1"
-    ;;
- "info")
-    logger -s -p “user.6” -t "c4a" "$1"
-    ;;
- "notice")
-    logger -s -p “user.5” -t "c4a" "$1"
-    ;;
-  "warn" | "warning")
-    crit -s -p “security.4" -t "c4a" "$1"
-    ;;
-  "err" | "error")
-    crit -s -p “security.3" -t "c4a" "$1"
-    ;;
-  "crit")
-    crit -s -p “security.2" -t "c4a" "$1"
-    ;;
-  "alert")
-    logger -s -p “security.1" -t "c4a" "$1"
-    ;;
-  "emr" | "emerg" | "emergency")
-    logger -s -p “security.0" -t "c4a" "$1"
-    ;;
-  *)
-     logger -s -p “user.3” -t "c4a" "Error. Request to wrie log was not as expected."
-    ;;
-esac
+# c4a logging wrapper
+# Usage: c4a_script_logging <level> <message...>
 
-
+log_event_c4a() {
+  local level="$1"; shift || true
+  local msg="$*"
+  # Default to notice if level missing
+  if [[ -z "$level" ]]; then
+    level="notice"
+  fi
+  case "$level" in
+    debug|DEBUG)
+      logger -p user.debug -t c4a -- "$msg" ;;
+    info|INFO)
+      logger -p user.info -t c4a -- "$msg" ;;
+    notice|NOTICE)
+      logger -p user.notice -t c4a -- "$msg" ;;
+    warn|warning|WARN|WARNING)
+      logger -p user.warning -t c4a -- "$msg" ;;
+    err|error|ERR|ERROR)
+      logger -p user.err -t c4a -- "$msg" ;;
+    crit|CRIT)
+      logger -p user.crit -t c4a -- "$msg" ;;
+    alert|ALERT)
+      logger -p user.alert -t c4a -- "$msg" ;;
+    emr|emerg|emergency|EMERG)
+      logger -p user.emerg -t c4a -- "$msg" ;;
+    *)
+      logger -p user.notice -t c4a -- "Invalid log level '$level'. $msg" ;;
+  esac
 }
 
-log_event_c4a "$1" "$2" 
+log_event_c4a "$@"
+

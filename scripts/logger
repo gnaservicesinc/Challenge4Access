@@ -1,36 +1,4 @@
 #!/bin/bash
-function log_event_c4a {
-case "$1" in
- "debug")
-    logger -s -p “user.7” -t "c4a" "$1"
-    ;;
- "info")
-    logger -s -p “user.6” -t "c4a" "$1"
-    ;;
- "notice")
-    logger -s -p “user.5” -t "c4a" "$1"
-    ;;
-  "warn" | "warning")
-    crit -s -p “security.4" -t "c4a" "$1"
-    ;;
-  "err" | "error")
-    crit -s -p “security.3" -t "c4a" "$1"
-    ;;
-  "crit")
-    crit -s -p “security.2" -t "c4a" "$1"
-    ;;
-  "alert")
-    logger -s -p “security.1" -t "c4a" "$1"
-    ;;
-  "emr" | "emerg" | "emergency")
-    logger -s -p “security.0" -t "c4a" "$1"
-    ;;
-  *)
-     logger -s -p “user.3” -t "c4a" "Error. Request to wrie log was not as expected."
-    ;;
-esac
-
-
-}
-
-log_event_c4a "$1" "$2" 
+# c4a logging wrapper (alias to c4a_script_logging)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+"${SCRIPT_DIR}/c4a_script_logging" "$@"

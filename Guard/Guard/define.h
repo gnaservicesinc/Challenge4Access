@@ -4,6 +4,8 @@
 //
 //  Created by Andrew Smith on 8/14/25.
 //
+#ifndef DEF_H
+#define DEF_H
 #ifndef OPREATE_AS_USER
 #define OPREATE_AS_USER "ryan"
 #endif
@@ -19,8 +21,8 @@
 #ifndef APP_MEMORIES_DIR
 #define APP_MEMORIES_DIR "/opt/c4a/protected/memory/app_memories"
 #endif
-#ifndef APP_MEMORIES_DIR
-#define APP_MEMORIES_DIR "/opt/c4a/protected/memory/global_memories"
+#ifndef GLOBAL_MEMORIES_DIR
+#define GLOBAL_MEMORIES_DIR "/opt/c4a/protected/memory/global_memories"
 #endif
 #ifndef GLOBAL_SETTINGS_DIR
 #define GLOBAL_SETTINGS_DIR "/opt/c4a/protected/ro/global_settings"
@@ -40,4 +42,4 @@
 #ifndef _FAIL_ON_WARNINGS_
 #define _FAIL_ON_WARNINGS_ 1
 #endif
-
+#endif // !DEF_H

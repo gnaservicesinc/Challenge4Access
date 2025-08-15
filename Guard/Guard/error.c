@@ -15,3 +15,8 @@ void print_install_setups_unfinished(void){
            AUTHORIZED_SELF_PATH,
            AUTHORIZED_SELF_PATH);
 }
+void guard_log(const char *Msg,int level,bool abort){
+
+    syslog(level, "c4a:Guard: %s\n", Msg);
+    if(abort) exit(EXIT_FAILURE);
+}

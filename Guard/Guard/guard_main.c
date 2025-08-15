@@ -54,26 +54,9 @@ void guard_daemon_loop(void){
 }
 
 extern int guard_main(char* fchar){
-    (void)fchar; // unused
+
+    srand( (unsigned int) time(NULL));
     change_to_user(OPREATE_AS_USER);
-    // Seed randomness for any internal uses
-    struct timespec ts;
-    timespec_get(&ts, TIME_UTC);
-    char time_buf[1024];
-    size_t rc = strftime(time_buf, sizeof time_buf, "%D %T", gmtime(&ts.tv_sec));
-    snprintf(time_buf + rc, sizeof time_buf - rc, ".%06ld", ts.tv_nsec);
-    srand(crc32(time_buf));
-    //
-    umask(0);
-    chdir("/");
-    // Example: Close standard file descriptors
-    close(STDIN_FILENO);
-    close(STDOUT_FILENO);
-    close(STDERR_FILENO);
-    open("/dev/null", O_RDWR); // stdin
-    dup(0); // stdout
-    dup(0); // stderr
-    // srand
 
     while (!file_exists(AUTHORIZED_TO_EXIT_FILE)) {
         syslog(LOG_NOTICE, "New Guard Loop.");
@@ -87,7 +70,7 @@ extern int guard_main(char* fchar){
         syslog(LOG_NOTICE, "Waking up.");
     }
     
-    ///on exit
+    syslog(LOG_NOTICE, "Shutting down guard.");
     return ((int) 3);
 }
 bool file_exists(const char *filename)
@@ -130,17 +113,5 @@ char *read_dat (void){
     return(strdup(str1));
 
 }
-/*
-void store_encrypted_data_append(char* data, char* fname){
-    FILE* fp = fopen(fname, "ab+");
-    if (!fp) {
-        exit(EXIT_FAILURE);
-    }
-    size_t r1 = fwrite(data, sizeof (char), strlen(data) +1,fp);
-    if (r1 != strlen(data) +1)
-    {
-        perror("store_encrypted_data_append fwrite did not return the same value as count. This means a writing error prevented the function from completing.\n");
-    }
-    fclose(fp);
-}*/
-// (no-op) previously unused helpers removed
+
+

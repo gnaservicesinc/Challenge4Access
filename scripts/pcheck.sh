@@ -1,46 +1,67 @@
 #!/bin/bash
+#!/bin/bash
+# Process check helper
+# Usage: pcheck.sh <name|command|external|url> <identifier>
+# Prints matching PIDs (newline-separated).
+# On invalid mode prints sentinel and exits non-zero.
 
-# 
-#  Usage
-#         pcheck.sh trigger_identification identification_data
-#  On error returns  "0123456789876543210"
+set -o pipefail
 
+sentinel="0123456789876543210"
 
-function check_by_name {
-   output="$(pgrep "$1")"
-   printf "$output"
-
+check_by_name() {
+  local pattern="$1"
+  # Name match: keep as pgrep (process name). If you need full cmdline, use command mode.
+  if command -v pgrep >/dev/null 2>&1; then
+    pgrep "$pattern" || true
+  else
+    ps -A -o pid= -o comm= | awk -v pat="$pattern" '$0 ~ pat {print $1}'
+  fi
 }
 
-function check_by_command {
-   output="$(ps aux | grep "$1" | grep -v grep | awk '{print $2}')"
-   printf ""$output""
-
+check_by_command() {
+  local pattern="$1"
+  # Prefer pgrep -f for full command matches; fallback to ps+awk
+  if command -v pgrep >/dev/null 2>&1; then
+    pgrep -f "$pattern" || true
+  else
+    ps aux | grep -F "$pattern" | grep -v grep | awk '{print $2}'
+  fi
 }
 
-function check_by_url {
-  # TODO 
-# Website blocking should follow this logic.
-#
-# If I block youtube.com, then m.youtuber.com and any other subdomains or variations are blocked.
-# If I block tv.app
+check_by_external() {
+  local cmd="$1"
+  # WARNING: executes provided command. Use only with trusted inputs.
+  eval "$cmd" 2>/dev/null || true
+}
+
+check_by_url() {
+  local url_or_domain="$1"
+  # TODO: Implement browser automation or system-wide filtering.
+  # For now, no-op to maintain interface; returns empty.
   printf ""
 }
-/System/Library/CoreServices/Finder.app/Contents/Resources/MyLibraries/SharedDocuments.cannedSearch
-case "$1" in
-    "name" | "Name" | "NAME")
-        check_by_name "$2"
-        ;;
-    "command" | "Command" | "COMMAND")
-        check_by_command "$2"
-        ;;
-    "external" | "External" | "EXTERNAL")
-        check_by_external "$2"
-        ;;
-    "url" | "Url" | "URL")
-        check_by_external "$2"
-        ;;
-    *)
-        printf "0123456789876543210"
-        ;;
+
+mode="${1:-}"
+data="${2:-}"
+
+case "$mode" in
+  name|Name|NAME)
+    check_by_name "$data"
+    ;;
+  command|Command|COMMAND)
+    check_by_command "$data"
+    ;;
+  external|External|EXTERNAL)
+    check_by_external "$data"
+    ;;
+  url|Url|URL)
+    check_by_url "$data"
+    ;;
+  *)
+    printf "%s" "$sentinel"
+    exit 2
+    ;;
 esac
+
+exit 0

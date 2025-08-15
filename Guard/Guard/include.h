@@ -7,27 +7,30 @@
 
 #ifndef include_h
 #define include_h
+
 #ifdef __STDC_ALLOC_LIB__
 #define __STDC_WANT_LIB_EXT2__ 1
 #else
 #define _POSIX_C_SOURCE 200809L
 #endif
-#define __STDC_WANT_LIB_EXT1__ 1
-#ifndef _FORTIFY_SOURCE
-#define _FORTIFY_SOURCE 2
-#endif
-#ifndef __USE_FORTIFY_LEVEL
-#define __USE_FORTIFY_LEVEL 2
-#endif
-#if __STDC_VERSION__ < 199901L
-    # if __GNUC__ >= 2
-        #  define __func__ __FUNCTION__
-         # else
-        #  define __func__ "<unknown>"
-         # endif
-#endif // __STDC_VERSION__ < 199901L
-#include <math.h>
 
+#define __STDC_WANT_LIB_EXT1__ 1
+
+#include <math.h>
+#include <stdarg.h>
+#include <iso646.h>
+#include <ctype.h>
+#include <limits.h>
+#include <sys/ipc.h>
+#include <locale.h>
+#include <setjmp.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <assert.h>
+#include <fcntl.h>
+#include <stddef.h>
+#include <uuid/uuid.h>
+#include <stdbool.h>
 #include <assert.h>
 #include <fenv.h>
 #include <float.h>
@@ -71,13 +74,22 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <pwd.h>
+#include <dlfcn.h>
 #include <grp.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/syslog.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <sys/time.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/dir.h>
+#include <memory.h>
+#include <sys/syscall.h>
+
 #include "define.h"
-
-
 #include "guard_main.h"
 #include "change_to_user.h"
 #include "error.h"
