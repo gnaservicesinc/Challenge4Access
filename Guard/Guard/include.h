@@ -1,0 +1,85 @@
+//
+//  include.h
+//  Guard
+//
+//  Created by Andrew Smith on 8/14/25.
+//
+
+#ifndef include_h
+#define include_h
+#ifdef __STDC_ALLOC_LIB__
+#define __STDC_WANT_LIB_EXT2__ 1
+#else
+#define _POSIX_C_SOURCE 200809L
+#endif
+#define __STDC_WANT_LIB_EXT1__ 1
+#ifndef _FORTIFY_SOURCE
+#define _FORTIFY_SOURCE 2
+#endif
+#ifndef __USE_FORTIFY_LEVEL
+#define __USE_FORTIFY_LEVEL 2
+#endif
+#if __STDC_VERSION__ < 199901L
+    # if __GNUC__ >= 2
+        #  define __func__ __FUNCTION__
+         # else
+        #  define __func__ "<unknown>"
+         # endif
+#endif // __STDC_VERSION__ < 199901L
+#include <math.h>
+
+#include <assert.h>
+#include <fenv.h>
+#include <float.h>
+#include <limits.h>
+#include <stdio.h> // needed for printf
+#include <stdio.h>
+#include <unistd.h> // For syscall()
+#include <sys/syscall.h>
+#include <pthread.h>
+#include <string.h>
+#include <time.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <stdbool.h>
+#include <stdalign.h>
+#include <limits.h>
+#include <inttypes.h>
+#include <sys/stat.h>
+#include <sys/random.h>
+#include <assert.h>
+#include <unistd.h>
+#include <signal.h>
+#include <ctype.h>
+#include <errno.h>
+#include <time.h>
+#include <stddef.h>
+#include <locale.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <wchar.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <limits.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/syslog.h>
+#include "define.h"
+
+
+#include "guard_main.h"
+#include "change_to_user.h"
+#include "error.h"
+#include "main.h"
+#endif // !include_h

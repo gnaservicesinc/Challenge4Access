@@ -1,0 +1,15 @@
+#!/bin/bash
+until /opt/c4a/bin/Guard; do
+
+    if [[ -e "/opt/c4a/protected/com/.g4exit" ]]; then
+	/opt/c4a/bin/c4a_script_logging "info" "Shutting down due to exit token. Time is "$(date)""
+	printf "\nGuard is now exiting, goodbye.\n"
+        break
+    else
+	/opt/c4a/bin/c4a_script_logging "alert" "Unexpected exit of Guard attempted at "$(date)""
+
+
+    sleep 1
+/opt/c4a/bin/c4a_script_logging "alert" "Attempting to relaunch Guard at "$(date)""
+	fi
+done

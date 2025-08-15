@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadDisplayName</key>
+			<string>Login Window: Scripts</string>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.mcxloginscripts.0714F4F5-4296-4656-A8FE-5B6AC37AE48C</string>
+			<key>PayloadType</key>
+			<string>com.apple.mcxloginscripts</string>
+			<key>PayloadUUID</key>
+			<string>0714F4F5-4296-4656-A8FE-5B6AC37AE48C</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>loginscripts</key>
+			<array>
+				<dict>
+					<key>filedata</key>
+					<data>
+					IyEvYmluL2Jhc2gKdW50aWwgL3Vzci9iaW4v
+					b3BlbiAtZyAtaiAtYiBjb20uYWpzLkM0QS5D
+					aGFsbGVuZ2U0QWNjZXNzOyBkbwogICAgc2xl
+					ZXAgMQpkb25lCg==
+					</data>
+					<key>filename</key>
+					<string>C4A_Launch</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>PayloadDisplayName</key>
+			<string>Login Window: Login Items</string>
+			<key>PayloadIdentifier</key>
+			<string>loginwindow.5CDB57D8-E8A7-4207-8207-2CD24856665F</string>
+			<key>PayloadType</key>
+			<string>loginwindow</string>
+			<key>PayloadUUID</key>
+			<string>5CDB57D8-E8A7-4207-8207-2CD24856665F</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>PayloadDisplayName</key>
+			<string>macOS Time Synchronization Daemon</string>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.timed.90765FB8-96EE-40C0-B3D4-11624212304C</string>
+			<key>PayloadType</key>
+			<string>com.apple.timed</string>
+			<key>PayloadUUID</key>
+			<string>90765FB8-96EE-40C0-B3D4-11624212304C</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>TMAutomaticTimeOnlyEnabled</key>
+			<true/>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>Ensure Challenge4Access is launched. Remove when uninstalling Challenge4Access. Requires admin.</string>
+	<key>PayloadDisplayName</key>
+	<string>Challenge4Access</string>
+	<key>PayloadIdentifier</key>
+	<string>Challenge4Access.248F520A-CEB5-4FFD-B42B-A2195B73CE22</string>
+	<key>PayloadRemovalDisallowed</key>
+	<true/>
+	<key>PayloadScope</key>
+	<string>System</string>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>248F520A-CEB5-4FFD-B42B-A2195B73CE22</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+	<key>TargetDeviceType</key>
+	<integer>5</integer>
+</dict>
+</plist>

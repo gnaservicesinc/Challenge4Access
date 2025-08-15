@@ -1,0 +1,241 @@
+Guard is intended to be configured manually at build time by a system admin, then set up according to the specifics of that install. 
+
+It is intended to be protected from a local non-admin user and to be easily disabled and removed by someone with admin rights. 
+
+To help protect it, we stick to configurations made at build time for those configs. It also can protect against 
+
+ChallengeGuard lets you configure specific websites, apps, and binaries on your system to limit usage of. We will just call these "App" regardless of whether it is a binary, an app, or a website.
+
+There is no max time or max opens; instead, each time you open it, you have to complete a challenge, and how hard that challenge is depends on the “temperature" of the app. That is based on how much you have used it recently, how many times it has been opened.  The app's “temperature" will increase with each launching or opening as well as more the longer it is open. (It gains more heat more quickly the longer it is used.)
+
+When it is not open and the computer is running 
+
+
+
+App and Web Delayer and Blocker for Mac OS Desktop
+
+Users can block and/or discourage use of specific apps or websites from opening and to limit time used when those are opened without using hard limits on anything; that can all be configured by the user and then even frozen if they want.
+
+Full blocking should be an option, but it's not the main point.
+
+The main use is the delay and discourage use part.  Instead of just blocking something or adding a hurdle to use it and scale that hurdle based on a combination of factors that relate to how frequently it is used, how long, and what it is. The user makes all of these choices and can change them, but it should have options to set a hurdle to doing so such as needing to have admin rights on the system, a password, or a challenge just like opening an app.  The user can set the options to do things like require admin rights or a password, etc.; after once set, it takes doing them to change it again.
+
+The settings data and other confirmation information should be stored in an area that can only be written to or changed by an administrator on the system. 
+
+The program should not appear in the list of applications for force quit.
+
+If the application is exited, it should be relaunched unless it is exited via using an exit button that will be located inside the settings panel and only accessible when it has been unlocked.  This can be achieved by launching, see /Users/andrewsmith/Desktop/projects/sensuser/Challenge4Access/App/Scripts/scripts/pcheck.sh
+A profile use admin can install that will launch the app using that script.
+/Users/andrewsmith/Desktop/projects/sensuser/Challenge4Access/App/Profiles/Challenge4Access.mobileconfig
+
+The blocking needs to work across web browsers and without extensions, and this can be done with automation permission for the installed browsers and can be requested when set up and enabled by the user. 
+
+
+Website blocking should follow this logic.
+
+If I block/discourage/delay youtube.com, then m.youtuber.com and any other subdomains or variations are blocked/discouraged/delayed.
+If I block/discourage/delay tv.apple.com, then apple.com is NOT blocked/discouraged/delayed.
+
+
+Apps and binaries can be identified by either an example "Firefox” or the launch command as would be shown on the command column of the output of "ps aux" for example "/System/Library/Frameworks/CoreSpotlight.framework/spotlightknowledged -u", or by a command that can be used to find the PID if the app or binary is running.
+	When the identification type is "name”, then the command "pgrep $value" should be used, where $value is the data stored in the entry for identification data.  
+
+	When the identification type is "command”, then the command "ps aux | grep $value | grep -v grep | awk '{print $2}'" should be used, where $value is the data stored in the entry for identification data
+
+	When the identification type is "external,” then the command "eval "$value"" should be used, where $value is the data stored in the entry for identification data.
+
+An example script is at /Users/andrewsmith/Desktop/projects/sensuser/Challenge4Access/App/Scripts/scripts/pcheck.sh
+
+
+
+Each thing, whether it is an app, website, or binary, that we have an entry for should also have a read-only "app_settings" file, a temporary memory file where we can store things for one cycle, a history file that keeps running totals and averages of use frequency and duration, and one readable memory file for global (impacts all).
+
+
+The App settings directory should be the directory at APP_SETTINGS_DIR (defaults to "/opt/c4a/protected/ro/app_settings“).
+
+Each .sqlv file will be loaded in that directory as an "app" (url, bin, on application).
+Apps in the same sqlv file are in a "group" and should have their temperatures summed, and usage on one should increase the temperatures of all in the same group but mostly for the app being used.
+
+
+When an app is opened, the value for sensitivity + the number of opens since the app was last at its starting temperature.
+
+If the temperature for the app is below globaltemp, N is reduced by half of that percentage of that difference.
+
+If the temperature for the app is above globaltemp, N is incremented by that percentage of that difference.
+
+Then temperature * final_multiplier is passed to one of the enabled tasks.
+
+If a 1 comes back, access is granted, and we start calculating the heart rate.  So long as the user exits before… 
+
+
+cool_rate will be subtracted from the app's temperature once every temperature_refresh_interval_in_seconds when the app is closed not yet marked as cooled.
+
+When the app reaches starting_temperature, then opens_since_last_cooled is reduced by 1 every temperature_refresh_interval_in_seconds until opens_since_last_cooled is 0. Then cooled is set to true.
+When cooled is true for an app, if date_time_of_last_free_open was over 24 hours ago, it may be opened without any delay, although doing so warms it for the next time. So when the app first launched if cooled is true, and date_time_of_last_free_open was over 24 hours ago, set date_time_of_last_free_open to now and set cooled to false and give a free opening of the app.  If date_time_of_last_free_open was less than 24 hours ago, then a delay based on temperature is used.
+
+
+heat_rate + sensitivity* (heat + opens_since_last_cooled) will be added to the app's temperature once every temperature_refresh_interval_in_seconds when the app is open.
+
+Inside each file is an app, website, or binary to be monitored. They should begin with the same name that is the value of unique_id for that app. No two apps may have the same unique_id and if they do, we crash if _FAIL_ON_WARNINGS_ else we log it. We only take the first one with that ID we encounter. So additional ones with the same ID are ignored.  Log an error or if _FAIL_ON_WARNINGS_ is true crash.
+
+if combustion_possible is true and temperature exceeds combustion_temp, then in the app memories we set burned to true.
+	A burned app cannot be accessed. 
+
+
+	 hours_remaining_until_not_burned in app memories to be equal to (recovery_length_in_hours_from_conbustion + opens_since_last_cooled + lifetime_numbr_of_times_burned), 
+
+
+
+Each app is checked for every cycle_frequency_in_seconds seconds.
+
+If seconds_of_usage_before_new_task is set to 0, then the user can use the app until combustion_temp without another task so long as they don't close it.
+If seconds_of_usage_before_new_task is not 0, then that many seconds after starting the use the app, it will be closed and another task will need to be done using its not temperature.
+
+Close it and they get a new task based on the new temperature.
+
+
+If always_blocked is enabled, then the app will be forced closed or website blocked at all times. 
+
+
+Read only per app, app settings
+CREATE TABLE app_settings (
+	unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT '1',
+	display_name STRING NOT NULL 'Name',
+	trigger_id_type STRING NOT NULL,
+	trigger_id_data STRING NOT NULL,
+	always_blocked BOOLEAN NOT NULL DEFAULT '0',
+	always_discouraged BOOLEAN NOT NULL DEFAULT '1',
+	sensitivity FLOAT NOT NULL DEFAULT '3.0',
+	starting_temperature FLOAT NOT NULL DEFAULT '1.0',
+	heat_rate FLOAT NOT NULL DEFAULT '1.0',
+	cool_rate FLOAT NOT NULL DEFAULT '0.05',
+	seconds_of_usage_before_new_task INTEGER NOT NULL DEFAULT '300',
+
+	temperature_refresh_interval_in_seconds FLOAT NOT NULL DEFAULT '60.0',
+	heat FLOAT NOT NULL DEFAULT '0.15’,
+	task_maths_available BOOLEAN NOT NULL DEFAULT '1',
+ 	task_lines_available BOOLEAN NOT NULL DEFAULT '1',
+	task_clicks_available BOOLEAN NOT NULL DEFAULT '1',
+	task_count_available BOOLEAN NOT NULL DEFAULT '1',
+	conbustion_possible BOOLEAN NOT NULL DEFAULT '1',
+	can_recover_from_conbustion_possible BOOLEAN NOT NULL DEFAULT '0',
+	conbustion_temp FLOAT NOT NULL DEFAULT '3000.0',
+	recovery_length_in_hours_from_conbustion INTEGER NOT NULL DEFAULT '72',
+ );
+
+A 0 for sensitivity or heat_rate is in effect turning off this aspect of the calculation and is also allowable but should trigger a visual change to ensure the user intends to turn these aspects off. A value of 0 for both sensitivity and heat_rate is also allowed and simply means that the difficulty of access will remain static, the dynamics are turned off for that one.
+
+-- DROP TABLE app_memories;
+CREATE TABLE app_memories (
+	mID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT '1',
+	app_unique_id STRING UNIQUE NOT NULL,
+	cooled BOOLEAN NOT NULL DEFAULT '1',	
+	last_seen_running_timestamp STRING,
+	lifetime_opens INTEGER,
+	opens_since_last_cooled INTEGER DEFAULT '0',
+	date_time_of_last_free_open STRING,
+	current_heat FLOAT NOT NULL DEFAULT '0.0',
+	last_heat FLOAT NOT NULL DEFAULT '0.0',
+	current_temperature FLOAT NOT NULL DEFAULT '1.0',
+	time_next_temperature_cycle_due_after STRING,
+	last_open_time STRING,
+	burned BOOLEAN NOT NULL DEFAULT '0',
+	lifetime_numbr_of_times_burned BOOLEAN NOT NULL DEFAULT '0',
+	hours_remaining_until_not_burned FLOAT DEFAULT '0’,
+	last_burned_date_time STRING 
+ );
+
+
+CREATE TABLE globsl_settings (
+	unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT '1',
+	cycle_frequency_in_seconds INTEGER NOT NULL,
+	final_multiplier FLOAT NOT NULL DEFAULT '1.05',
+	globaltemp FLOAT NOT NULL DEFAULT '1.0‘
+);
+	can_fail_tasks BOOLEAN NOT NULL DEFAULT '1',
+	grade_tasks BOOLEAN NOT NULL DEFAULT '1',
+	min_grade_to_pass FLOAT NOT NULL DEFAULT '0.95'
+	ambient_temp FLOAT NOT NULL DEFAULT '1.0',
+
+
+ambient_temp is the average of all of the temperatures of apps that do not have cooled set to true. 
+
+
+N is calculated. 
+
+Each task category has read-only settings such as this one for math.
+
+IF reset_immediatly_on_fail is true, then the moment that ((current_N_owned_total - current_N_compleated) * the_problems_per_n_for_the_expected_problem_type) + current_score / max_possible_score) * 100 < min_grade_to_pass * 100, a score of 0 is returned as a failure.
+
+IF reset_immediatly_on_fail is false, the score is not calculated until current_N_compleated > current_N_owned_total.
+
+If the PID for the task vanishes but no score is returned, can_fail_tasks is true, and process_ended_without_pass_or_fail is set to true. When process_ended_without_pass_or_fail is true,
+When an app is found to have process_ended_without_pass_or_fail true, Guard will mark the app listed under last_task_was_for_access_to_app_unique_id as burned, set the burn time, and multiply current_N_owned_total by early_exit_multiplyer, set current_score to 0, current_N_compleated to 0, update task_started_at to now, and set process_ended_without_pass_or_fail to false, then start the task again with the new parameters.
+
+When an answer takes longer than max_seconds_per_answer for that question type, the user gets it wrong regardless of the answer input.
+
+If the user gets it wrong more than attempts_per_problem, then they get 0 points; if attempts_per_problem is 1.0, then they get one attempt to answer each question correctly.
+
+max_possible_score is the math_problems_per_n for the problem type multiplied by current_N_owned_total * the points per problem for that problem type. 
+
+Score at the end is:
+       if can_fail_tasks is true:
+	We take (current_score / max_possible_score) and if it is less than min_grade_to_pass, we return 0 for fail. More than and we return 1 for a pass.
+       if can_fail_tasks is false, we return 1 regardless of the score. 
+
+
+If grade_tasks is false, any wrong answers will be considered a fail.
+if grade_tasks is true, then so long as min_grade_to_pass is achieved, the user passes. 
+
+
+CREATE TABLE task_maths (
+	unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT '1',
+	problems_per_n INTEGER NOT NULL DEFAULT '5',
+	adding_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	attempts_per_problem INTEGER NOT NULL DEFAULT '1’,
+	timed BOOLEAN NOT NULL DEFAULT '1',
+	reset_immediatly_on_fail BOOLEAN NOT NULL DEFAULT '0',
+	subtracking_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1', 
+	multiplication_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	division_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	values_up_to_9_allowed BOOLEAN NOT NULL DEFAULT '1',
+	values_up_to_100_allowed BOOLEAN NOT NULL DEFAULT '1',
+	values_up_to_1000_allowed BOOLEAN NOT NULL DEFAULT '0',
+	simple_algebra_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	simple_geometry_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	algebra_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	geometry_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	adding_math_problems_per_n FLOAT NOT NULL DEFAULT '0.1',
+	subtracking_math_problems_per_n FLOAT NOT NULL DEFAULT '0.1',
+	multiplication_math_problems_per_n FLOAT NOT NULL DEFAULT '0.2',
+	division_math_problems_per_n FLOAT NOT NULL DEFAULT '0.2',
+	simple_algebra_math_problems_per_n FLOAT NOT NULL DEFAULT '0.5',
+	simple_geometry_math_problems_per_n FLOAT NOT NULL DEFAULT '0.5',
+	algebra_math_problems_per_n FLOAT NOT NULL DEFAULT '0.9',
+	geometry_math_problems_per_n FLOAT NOT NULL DEFAULT '0.9',
+	max_seconds_per_answer_adding_math_problems FLOAT NOT NULL DEFAULT '20.0',
+	max_seconds_per_answer_subtracking_math_problems FLOAT NOT NULL DEFAULT '20.0',
+	max_seconds_per_answer_multiplication_math_problems FLOAT NOT NULL DEFAULT '45.0',
+	max_seconds_per_answer_division_math_problems FLOAT NOT NULL DEFAULT '45.0',
+	max_seconds_per_answer_simple_algebra_math_problems FLOAT NOT NULL DEFAULT '90.0',
+	max_seconds_per_answer_simple_geometry_math_problems FLOAT NOT NULL DEFAULT '90.0',
+	max_seconds_per_answer_algebra_math_problems FLOAT NOT NULL DEFAULT '240.0',
+	max_seconds_per_answer_geometry_math_problems FLOAT NOT NULL DEFAULT '240.0',
+	early_exit_multiplyer FLOAT NOT NULL DEFAULT '10.0',
+	failed_multiplyer FLOAT NOT NULL DEFAULT '1.5',
+
+ );
+
+Each task category has read/write memory as well.
+
+
+CREATE TABLE task_maths_memory (
+	unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT '1',
+	last_task_was_for_access_to_app_unique_id STRING UNIQUE NOT NULL,
+	current_N_owned_total INTEGER NOT NULL,
+	current_N_compleated INTEGER NOT NULL,
+	max_possible_score INTEGER NOT NULL,
+	current_score INTEGER NOT NULL,
+	task_started_at STRING,
+	process_ended_without_pass_or_fail BOOLEAN NOT NULL DEFAULT '0'
+ );
