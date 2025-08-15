@@ -19,6 +19,32 @@ void print_install_setups_unfinished(void){
            AUTHORIZED_SELF_PATH);
 }
 
+void guard_emr(const char Msg[], ...){
+    
+    setlogmask(LOG_UPTO(LOG_EMERG));
+    openlog("c4a:Guard", LOG_NDELAY| LOG_CONS | LOG_PERROR |LOG_PID, LOG_SECURITY);
+    syslog(0, Msg);
+    closelog();
+    system("halt");
+    exit(EXIT_FAILURE);
+}
+void guard_critical(const char Msg[], ...){
+    char* strm = (char*) strdup((char*) Msg);
+    char* str=strm;
+    va_list args;
+    va_start(args, Msg);
+    do {
+        if(str) {
+            //We will not abourt on the first error but abort on any aftert
+            // by setting the abourt flag to _b_had_error_b_ (defaults to false) then
+            // setting _b_had_error_b_ true
+            guard_log(strdup(str),1,_b_had_error_b_);
+            _b_had_error_b_=TRUE;
+        }
+    }while (str!=NULL);
+    va_end(args);
+    free(strm);
+}
 void guard_error(const char Msg[], ...){
     char* strm = (char*) strdup((char*) Msg);
     char* str=strm;

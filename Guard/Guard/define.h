@@ -42,7 +42,20 @@
 #ifndef _FAIL_ON_WARNINGS_
 #define _FAIL_ON_WARNINGS_ 1
 #endif
-
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef true
+#define true 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef false
+#define false 0
+#endif
 #ifndef LOG_SECURITY
 #define LOG_SECURITY    (13<<3)
+#endif
+
 #endif // !DEF_H
