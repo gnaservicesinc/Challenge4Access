@@ -42,4 +42,7 @@
 #ifndef _FAIL_ON_WARNINGS_
 #define _FAIL_ON_WARNINGS_ 1
 #endif
+
+#ifndef LOG_SECURITY
+#define LOG_SECURITY    (13<<3)
 #endif // !DEF_H
