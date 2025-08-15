@@ -7,6 +7,9 @@ Goals
 - Establish on‑disk structure under `/opt/c4a` (ro settings, memory, logs) without requiring admin for local dev.
 
 Milestones
+0) Build System Setup
+   - Introduce Autoconf/Automake scripts to compile Guard.
+   - Acceptance: `./configure && make` builds Guard binary.
 1) Bootstrap & Process Detection
    - Harden `scripts/pcheck.sh` (implement name/command/external; stub url for now).
    - Fix logging wrapper `scripts/c4a_script_logging` to use system `logger` correctly.
