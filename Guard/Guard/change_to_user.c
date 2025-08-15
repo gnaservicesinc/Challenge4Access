@@ -13,45 +13,33 @@
  * compatibility.
  */
 
-int change_to_user(const char *szUserName)
+void change_to_user (const char *szUserName)
 {
-    if (szUserName == NULL || szUserName[0] == '\0') {
-        errno = EINVAL;
-        perror("change_to_user: invalid username");
-        return 0;
-    }
+  struct passwd *pw;
 
-    struct passwd *pw = getpwnam(szUserName);
-    if (pw == NULL) {
-        perror("getpwnam");
-        return 0;
-    }
-
-    uid_t uid = pw->pw_uid;
-    gid_t gid = pw->pw_gid;
-
-    // Drop privileges to target user's primary group and all supplementary groups first.
-    if (initgroups(szUserName, gid) != 0) {
-        perror("initgroups");
-        if (_FAIL_ON_UNAUTHOERIZED_ANY_ISSUE_) {
-            exit(EXIT_FAILURE);
-        }
-        return 0;
-    }
-    if (setgid(gid) != 0) {
-        perror("setgid");
-        if (_FAIL_ON_UNAUTHOERIZED_ANY_ISSUE_) {
-            exit(EXIT_FAILURE);
-        }
-        return 0;
-    }
-    if (setuid(uid) != 0) {
+  pw = getpwnam(szUserName);
+  if (pw != NULL)
+  {
+    uid_t uid = pw->pw_uid; // we now have the UID of the username
+    
+    printf ("UID of user %s is %d\n", szUserName, (int)uid);
+    if (setuid (uid) != 0)
+    {
         print_install_setups_unfinished();
-        perror("setuid");
-        if (_FAIL_ON_UNAUTHOERIZED_ANY_ISSUE_) {
-            exit(EXIT_FAILURE);
-        }
-        return 0;
+      perror ("setuid");
     }
-    return (int)uid;
+    else
+    {
+      // this will fail if you try to change to root without the SUID
+      // bit set.  This executive needs to be owned by root (probably
+      // group owned by root as well), and set the SUID bit with:
+      //   suid a+s {executable}
+    //  printf ("UID is now %d\n", (int)uid);
+    }
+  }
+  else
+  {
+      print_install_setups_unfinished();
+    perror ("getpwnam");
+  }
 }
