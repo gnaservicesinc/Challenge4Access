@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AppKit
 
 @main
 struct CountApp: App {
@@ -20,24 +19,9 @@ struct CountApp: App {
         _model = StateObject(wrappedValue: CountViewModel(N: n, gradeTasks: grade, minGrade: minGrade))
     }
 
-    private static func setupEventMonitors(model: CountViewModel) {
-        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-            if let chars = event.characters, chars.range(of: "^[0-9\r\n]$", options: .regularExpression) != nil {
-                return event
-            } else {
-                model.fail(reason: "Invalid key")
-                return nil
-            }
-        }
-        NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { _ in
-            model.fail(reason: "Mouse moved")
-        }
-    }
-
     var body: some Scene {
         WindowGroup {
             ContentView().environmentObject(model)
-                .onAppear { Self.setupEventMonitors(model: model) }
         }
     }
 }
