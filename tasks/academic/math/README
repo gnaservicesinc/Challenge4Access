@@ -1,0 +1,79 @@
+maths - Presenting with mathth probems that fit the scope of the settings that may be timmed and
+
+Accecpts 3 CLI value, a number for N.
+Argumnet 1 is N (hw hard and logn the task will be)
+Argument 2 is grade_tasks and should be set to the value of grade_tasks from globsl_settings by  guard when launchung the task. Shold be 1 or 0 defaults to 1
+Argument 3 is min_grade_to_pass and should be set to the value of grade_tasks from min_grade_to_pass  by  guard when launchung the task. Shold be  between 1 or 0 defaults to 0.95
+
+Returns either 1 or 0. 
+1 if passed
+0 if not
+
+
+
+When an answer takes longer than max_seconds_per_answer for that question type, the user gets it wrong regardless of the answer input.
+
+If the user gets it wrong more than attempts_per_problem, then they get 0 points; if attempts_per_problem is 1.0, then they get one attempt to answer each question correctly.
+
+max_possible_score is the math_problems_per_n for the problem type multiplied by current_N_owned_total * the points per problem for that problem type. 
+
+Score at the end is:
+       if can_fail_tasks is true:
+	We take (current_score / max_possible_score) and if it is less than min_grade_to_pass, we return 0 for fail. More than and we return 1 for a pass.
+       if can_fail_tasks is false, we return 1 regardless of the score. 
+
+
+If grade_tasks is false, any wrong answers will be considered a fail.
+if grade_tasks is true, then so long as min_grade_to_pass is achieved, the user passes. 
+
+
+CREATE TABLE task_maths (
+	unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT '1',
+	problems_per_n INTEGER NOT NULL DEFAULT '5',
+	adding_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	attempts_per_problem INTEGER NOT NULL DEFAULT '1’,
+	timed BOOLEAN NOT NULL DEFAULT '1',
+	reset_immediatly_on_fail BOOLEAN NOT NULL DEFAULT '0',
+	subtracking_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1', 
+	multiplication_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	division_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	values_up_to_9_allowed BOOLEAN NOT NULL DEFAULT '1',
+	values_up_to_100_allowed BOOLEAN NOT NULL DEFAULT '1',
+	values_up_to_1000_allowed BOOLEAN NOT NULL DEFAULT '0',
+	simple_algebra_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	simple_geometry_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	algebra_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	geometry_math_problems_allowed BOOLEAN NOT NULL DEFAULT '1',
+	adding_math_problems_per_n FLOAT NOT NULL DEFAULT '0.1',
+	subtracking_math_problems_per_n FLOAT NOT NULL DEFAULT '0.1',
+	multiplication_math_problems_per_n FLOAT NOT NULL DEFAULT '0.2',
+	division_math_problems_per_n FLOAT NOT NULL DEFAULT '0.2',
+	simple_algebra_math_problems_per_n FLOAT NOT NULL DEFAULT '0.5',
+	simple_geometry_math_problems_per_n FLOAT NOT NULL DEFAULT '0.5',
+	algebra_math_problems_per_n FLOAT NOT NULL DEFAULT '0.9',
+	geometry_math_problems_per_n FLOAT NOT NULL DEFAULT '0.9',
+	max_seconds_per_answer_adding_math_problems FLOAT NOT NULL DEFAULT '20.0',
+	max_seconds_per_answer_subtracking_math_problems FLOAT NOT NULL DEFAULT '20.0',
+	max_seconds_per_answer_multiplication_math_problems FLOAT NOT NULL DEFAULT '45.0',
+	max_seconds_per_answer_division_math_problems FLOAT NOT NULL DEFAULT '45.0',
+	max_seconds_per_answer_simple_algebra_math_problems FLOAT NOT NULL DEFAULT '90.0',
+	max_seconds_per_answer_simple_geometry_math_problems FLOAT NOT NULL DEFAULT '90.0',
+	max_seconds_per_answer_algebra_math_problems FLOAT NOT NULL DEFAULT '240.0',
+	max_seconds_per_answer_geometry_math_problems FLOAT NOT NULL DEFAULT '240.0',
+
+
+ );
+
+Each task category has read/write memory as well.
+
+
+CREATE TABLE task_maths_memory (
+	unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT '1',
+	last_task_was_for_access_to_app_unique_id STRING UNIQUE NOT NULL,
+	current_N_owned_total INTEGER NOT NULL,
+	current_N_compleated INTEGER NOT NULL,
+	max_possible_score INTEGER NOT NULL,
+	current_score INTEGER NOT NULL,
+	task_started_at STRING,
+	process_ended_without_pass_or_fail BOOLEAN NOT NULL DEFAULT '0'
+ );

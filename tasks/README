@@ -1,0 +1,23 @@
+Each task will accepts and expects CLI Arguments as follows
+
+Argumnet 1 is N (hw hard and logn the task will be)
+Argument 2 is grade_tasks and should be set to the value of grade_tasks from globsl_settings by  guard when launchung the task. Shold be 1 or 0 defaults to 1
+Argument 3 is min_grade_to_pass and should be set to the value of grade_tasks from min_grade_to_pass  by  guard when launchung the task. Shold be  between 1 or 0 defaults to 0.95
+
+
+They should return either 1 or 0. 
+	It shold return 1 if the task was completed correctly with a passing score or better if grade_tasks was 1.
+	It shold return 1 if the task was completed perfectly with no errors if grade_tasks was 0.  (grading makes it easier, it allows you do mess up some on the task so long as your grade is passing you pass)
+	In all other cases it should retun 0 if the exit was normal and happend at because the task was finished.
+	It shold try to return -1  in all other cases.
+
+
+
+N can be different things depending on the task specifics and the settings for the task; however, its meaning should scale consistently for the same task. So a N of 8 should be twice as long and hard as one with an N of 4, but since length and complexity do not necessarily scale (complexity may be fine and length not), so this scaling is up to interpretation. Each app should have its own formula for how to interpolate N fairly as it grows.  It is okay if the task scales to the point where it is not realistically possible to do it; that is sort of the point. Instead of hard blocking, we are simply increasing the hurdle as usage goes up and decreasing it over time as usage has stopped.
+
+The path to our settings file is install-specific and should be set before compile time to a fully qualified path and be compiled in as a constant read-only value with no way to pass a different path at runtime. It is on the admin of the system with C4A to ensure a 
+
+ full path to our settings file, and it should consist with C4A_PER_TASK_SETTINGS_DIR from /Users/andrewsmith/Desktop/projects/sensuser/Challenge4Access/Challenge4Access/Guard/Guard/define.h.
+
+If our setting file cannot be read for any reason, we should have an internal list of sane defaults and fall back to using the sane defaults.
+

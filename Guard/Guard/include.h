@@ -7,15 +7,24 @@
 
 #ifndef include_h
 #define include_h
-
+#ifndef _FORTIFY_SOURCE
+#define _FORTIFY_SOURCE 2
+#endif
+#ifndef __USE_FORTIFY_LEVEL
+#define __USE_FORTIFY_LEVEL 2
+#endif
 #ifdef __STDC_ALLOC_LIB__
 #define __STDC_WANT_LIB_EXT2__ 1
 #else
 #define _POSIX_C_SOURCE 200809L
 #endif
-
+/*
+ As with all bounds-checked functions, scanf_s, fscanf_s, and sscanf_s are only guaranteed to be available if __STDC_LIB_EXT1__ is defined by the implementation and if the user defines __STDC_WANT_LIB_EXT1__ to the integer constant 1 before including <stdio.h>.
+ */
 #define __STDC_WANT_LIB_EXT1__ 1
-
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include <math.h>
 #include <stdarg.h>
 #include <iso646.h>

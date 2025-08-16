@@ -1,0 +1,29 @@
+maths - Presenting with math problems that fit the scope of the settings that may be timed and
+
+Accepts 3 CLI values, a number for N.
+Argument 1 is N (hw hard and long the task will be)
+Argument 2 is grade_tasks and should be set to the value of grade_tasks from global_settings by guard when launching the task. Should be 1 or 0 defaults to 1
+Argument 3 is min_grade_to_pass and should be set to the value of grade_tasks from min_grade_to_pass by guard when launching the task. Should be between 1 or 0 defaults to 0.95
+
+Returns either 1 or 0. 
+1 if passed
+0 if not
+
+
+When the app is running the only input allowed is your number keys and the enter key. Any other input will cause the task to stop and 0 returned.
+
+While running if the x and y of the mouse pointer move, the task is failed. 
+If any key other than the number keys and the enter key is pressed, the task is failed.
+
+If the app loses focus, is minimized, etc then the task is failed. 
+
+
+The user will be shown a full screen drawing or render with different shapes and colors on them.  They will be asked to count all of one of more specific shapes and colors. 
+
+Example: all of the green squares. 
+Example: all of the blue circles and green triangles 
+etc.
+
+The user will enter the value by typing the numbers, if it is greater than 9 then can just enter the next digit, so 94 if the answer is 94.  When they hit enter the value entered is evaluated to see if it is correct to determine if that round was passed.
+
+There may be many rounds depending on the value of N
