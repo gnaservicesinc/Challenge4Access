@@ -164,7 +164,6 @@ CREATE TABLE app_settings (
 	heat_rate FLOAT NOT NULL DEFAULT '1.0',
 	cool_rate FLOAT NOT NULL DEFAULT '0.05',
 	seconds_of_usage_before_new_task INTEGER NOT NULL DEFAULT '300',
-
 	temperature_refresh_interval_in_seconds FLOAT NOT NULL DEFAULT '60.0',
 	heat FLOAT NOT NULL DEFAULT '0.15’,
 	task_maths_available BOOLEAN NOT NULL DEFAULT '1',
@@ -191,9 +190,9 @@ CREATE TABLE app_memories (
 	current_heat FLOAT NOT NULL DEFAULT '0.0',
 	last_heat FLOAT NOT NULL DEFAULT '0.0',
 	current_temperature FLOAT NOT NULL DEFAULT '1.0',
-	time_next_temperature_cycle_due_after STRING,
 	last_open_time STRING,
 	burned BOOLEAN NOT NULL DEFAULT '0',
+	burned_forever BOOLEAN NOT NULL DEFAULT '0',
 	lifetime_numbr_of_times_burned BOOLEAN NOT NULL DEFAULT '0',
 	hours_remaining_until_not_burned FLOAT DEFAULT '0’,
 	last_burned_date_time STRING 

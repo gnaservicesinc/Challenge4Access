@@ -12,7 +12,7 @@ Returns either 1 or 0.
 
 When the app is running the only input allowed is your number keys and the enter key. Any other input will cause the task to stop and 0 returned.
 
-While running if the x and y of the mouse pointer move, the task is failed. 
+While running if the x and y of the mouse pointer move, the task is failed.  // This shuld be allowed initially for a few seconds the idea here is to protect aginst unknown methods of cheating the app by tring to now allow anything
 If any key other than the number keys and the enter key is pressed, the task is failed.
 
 If the app loses focus, is minimized, etc then the task is failed. 

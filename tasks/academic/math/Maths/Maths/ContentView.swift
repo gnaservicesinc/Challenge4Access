@@ -1,6 +1,6 @@
 import SwiftUI
 import Foundation
-internal import Combine
+import Combine
 
 enum Operation: CaseIterable {
     case add, sub, mul, div
@@ -58,6 +58,17 @@ final class MathsViewModel: ObservableObject {
         memory.maxPossibleScore = settings.problemsPerN * memory.currentNTotal
         Self.saveMemory(path: C4A_OUR_MEMORY_FILE, memory)
         nextQuestion()
+    }
+
+    // Expose progress and timer to UI
+    func progressCounts() -> (completed: Int, total: Int) {
+        return (memory.currentNCompleted, memory.maxPossibleScore)
+    }
+
+    func timeRemainingSeconds() -> Double? {
+        guard settings.timed, let limit = settings.maxSeconds[currentOperation] else { return nil }
+        let elapsed = Date().timeIntervalSince(startTime)
+        return max(0.0, limit - elapsed)
     }
 
     func submit() {
@@ -260,27 +271,51 @@ private extension Array {
 
 struct ContentView: View {
     @EnvironmentObject var model: MathsViewModel
+    @State private var timeLeft: Double? = nil
+    private let timer = Timer.publish(every: 0.2, on: .main, in: .common).autoconnect()
 
     var body: some View {
+        VStack(spacing: 16) {
+            // Header: progress and timer
+            let prog = model.progressCounts()
+            ProgressView(value: Double(prog.completed), total: Double(prog.total))
+                .progressViewStyle(.linear)
+            HStack {
+                Text("Completed: \(prog.completed)/\(prog.total)")
+                Spacer()
+                if let tl = timeLeft {
+                    Text("Time left: \(Int(ceil(tl)))s")
+                        .foregroundColor(tl > 5 ? .primary : .red)
+                }
+            }
 
-        VStack {
+            // Question
             Text(model.question)
+                .font(.largeTitle)
+                .bold()
             TextField("Answer", text: $model.answerInput)
                 .textFieldStyle(.roundedBorder)
+                .font(.title2)
+                .multilineTextAlignment(.center)
                 .onSubmit { model.submit() }
             Button("Submit") { model.submit() }
+                .keyboardShortcut(.return)
+
             if !model.status.isEmpty {
                 Text(model.status)
+                    .font(.title3)
+                    .foregroundColor(model.status == "Correct" ? .green : .red)
             }
         }
         .padding()
-
-        Text("Maths Task")
-
+        .onReceive(timer) { _ in
+            timeLeft = model.timeRemainingSeconds()
+        }
     }
+
+    // No additional helpers needed; UI queries VM directly
 }
 
 #Preview {
     ContentView().environmentObject(MathsViewModel(N: 1, gradeTasks: true, minGrade: 0.95))
 }
-

@@ -5,7 +5,11 @@
 //  Created by Andrew Smith on 8/14/25.
 //
 #include "include.h"
-int guard_daemon_loop(void);
+#include "c4a_types.h"
+#include "c4a_store.h"
+#include "guard_tick.h"
+static C4aContext *g_ctx = NULL;
+static int guard_daemon_loop(void);
 
 
 
@@ -40,23 +44,19 @@ uint32_t crc32(const char* s) {
     }
     return crc ^ 0xffffffff;
 }
-int guard_daemon_loop(void){
+static int guard_daemon_loop(void){
     if (file_exists(AUTHORIZED_TO_EXIT_FILE)) {
         return(1);
     }
-    sleep(5);
-    if (file_exists(AUTHORIZED_TO_EXIT_FILE)) {
-        return(1);
+    if (!g_ctx) {
+        g_ctx = c4a_context_new();
+        if (g_ctx) {
+            c4a_bootstrap(g_ctx);
+        }
     }
-    //Pre Loop Checks
-    
-    //Loops Checks
-    
-    //Actions
-    
-    // Challanges
-    
-    //End loop actions
+    if (g_ctx) {
+        guard_tick(g_ctx);
+    }
     return(0);
 }
 
@@ -72,11 +72,11 @@ extern int guard_main(char* fchar){
             guard_notice("Shutting down guard.");
             return 0;
         }
-        sleep(1);
-        // [TODO] set up preprocessor directives to remove this line when --enable-debugging is not set
-        guard_notice("DCYCLE over. Sleeping for C4A_GUARD_DCYCLE_TIME.");
-        sleep(C4A_GUARD_DCYCLE_TIME); // Sleep for C4A_GUARD_DCYCLE_TIME seconds
-        guard_notice("Waking for DCYCLE.");
+        int dsec = C4A_GUARD_DCYCLE_TIME;
+        if (g_ctx && g_ctx->globals.cycle_frequency_in_seconds > 0) {
+            dsec = g_ctx->globals.cycle_frequency_in_seconds;
+        }
+        sleep(dsec);
     }
     
     guard_notice("Shutting down guard.");
@@ -122,5 +122,4 @@ char *read_dat (void){
     return(strdup(str1));
 
 }
-
 

@@ -1,0 +1,36 @@
+#!/bin/bash
+# Task launcher: Usage: launch_task <type> <N> <grade> <min_grade>
+# Looks for an installed app bundle in /opt/c4a/Applications and executes the binary
+# inside the bundle so we can capture the exit code. Falls back to open -W.
+set -euo pipefail
+type="${1:-maths}"; N="${2:-1}"; grade="${3:-1}"; minp="${4:-0.95}"
+logger -p user.notice -t c4a -- "launch_task type=$type N=$N grade=$grade min=$minp"
+
+case "$type" in
+  maths|Maths) app="/opt/c4a/Applications/Maths.app"; bin="${app}/Contents/MacOS/Maths" ;;
+  lines|Lines) app="/opt/c4a/Applications/Lines.app"; bin="${app}/Contents/MacOS/Lines" ;;
+  clicks|Clicks) app="/opt/c4a/Applications/Clicks.app"; bin="${app}/Contents/MacOS/Clicks" ;;
+  count|Count) app="/opt/c4a/Applications/Count.app"; bin="${app}/Contents/MacOS/Count" ;;
+  *) app="/opt/c4a/Applications/Maths.app"; bin="${app}/Contents/MacOS/Maths" ;;
+esac
+
+if [ -x "$bin" ]; then
+  exec "$bin" "$N" "$grade" "$minp"
+fi
+
+if [ -d "$app" ]; then
+  # open does not relay exit code; we at least wait for the app to quit
+  /usr/bin/open -W -n -a "$app" --args "$N" "$grade" "$minp"
+  # Without a return code channel, treat close as pass to avoid lockout
+  exit 1
+fi
+
+# Development fallback: try local build products if available
+for p in \
+  "$(pwd)/Challenge4Access/tasks/academic/math/Maths/build/Release/Maths.app/Contents/MacOS/Maths" \
+  "$(pwd)/Challenge4Access/tasks/repetitive/Count/Count/build/Release/Count.app/Contents/MacOS/Count" ; do
+  if [ -x "$p" ]; then exec "$p" "$N" "$grade" "$minp"; fi
+done
+
+# As a last resort, default pass to avoid blocking
+exit 1

@@ -1,0 +1,154 @@
+#!/bin/bash
+# c4a_admin: bootstrap and manage C4A settings and app configs
+# Usage:
+#   c4a_admin init
+#   c4a_admin create-task-maths
+#   c4a_admin add-app <group> <unique_id> <display_name> <trigger_type:name|command|external|url> <trigger_data>
+#   c4a_admin list-apps
+
+set -euo pipefail
+
+APP_SETTINGS_DIR="/opt/c4a/protected/ro/app_settings"
+GLOBAL_SETTINGS_DIR="/opt/c4a/protected/ro/global_settings"
+GLOBAL_MEM_DIR="/opt/c4a/protected/memory/global_memories"
+APP_MEM_DIR="/opt/c4a/protected/memory/app_mem"
+TASK_SETTINGS_DIR="/opt/c4a/protected/ro/task_settings"
+
+ensure_tree() {
+  for d in "$@"; do
+    if [ ! -d "$d" ]; then sudo mkdir -p "$d"; fi
+  done
+}
+
+init_globals() {
+  local db="$GLOBAL_SETTINGS_DIR/global.sqlite"
+  /usr/bin/sqlite3 "$db" <<'SQL'
+CREATE TABLE IF NOT EXISTS globsl_settings (
+  unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT 1,
+  cycle_frequency_in_seconds INTEGER NOT NULL,
+  final_multiplier FLOAT NOT NULL DEFAULT 1.05,
+  globaltemp FLOAT NOT NULL DEFAULT 1.0,
+  can_fail_tasks BOOLEAN NOT NULL DEFAULT 1,
+  grade_tasks BOOLEAN NOT NULL DEFAULT 1,
+  min_grade_to_pass FLOAT NOT NULL DEFAULT 0.95,
+  ambient_temp FLOAT NOT NULL DEFAULT 1.0,
+  early_exit_enforment BOOLEAN NOT NULL DEFAULT 1,
+  early_exit_multiplyer FLOAT NOT NULL DEFAULT 10.0,
+  failed_multiplyer FLOAT NOT NULL DEFAULT 1.5
+);
+INSERT OR IGNORE INTO globsl_settings (unique_id,cycle_frequency_in_seconds) VALUES (1,60);
+SQL
+  echo "Initialized globals at $db"
+}
+
+create_task_maths() {
+  local db="$TASK_SETTINGS_DIR/maths"
+  /usr/bin/sqlite3 "$db" <<'SQL'
+CREATE TABLE IF NOT EXISTS task_maths (
+  unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT 1,
+  problems_per_n INTEGER NOT NULL DEFAULT 5,
+  adding_math_problems_allowed BOOLEAN NOT NULL DEFAULT 1,
+  attempts_per_problem INTEGER NOT NULL DEFAULT 1,
+  timed BOOLEAN NOT NULL DEFAULT 1,
+  reset_immediatly_on_fail BOOLEAN NOT NULL DEFAULT 0,
+  subtracking_math_problems_allowed BOOLEAN NOT NULL DEFAULT 1,
+  multiplication_math_problems_allowed BOOLEAN NOT NULL DEFAULT 1,
+  division_math_problems_allowed BOOLEAN NOT NULL DEFAULT 1,
+  values_up_to_9_allowed BOOLEAN NOT NULL DEFAULT 1,
+  values_up_to_100_allowed BOOLEAN NOT NULL DEFAULT 1,
+  values_up_to_1000_allowed BOOLEAN NOT NULL DEFAULT 0,
+  max_seconds_per_answer_adding_math_problems FLOAT NOT NULL DEFAULT 20.0,
+  max_seconds_per_answer_subtracking_math_problems FLOAT NOT NULL DEFAULT 20.0,
+  max_seconds_per_answer_multiplication_math_problems FLOAT NOT NULL DEFAULT 45.0,
+  max_seconds_per_answer_division_math_problems FLOAT NOT NULL DEFAULT 45.0
+);
+INSERT OR IGNORE INTO task_maths (unique_id) VALUES (1);
+-- memory
+CREATE TABLE IF NOT EXISTS task_maths_memory (
+  unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT 1,
+  last_task_was_for_access_to_app_unique_id STRING UNIQUE NOT NULL DEFAULT '',
+  current_N_owned_total INTEGER NOT NULL DEFAULT 0,
+  current_N_compleated INTEGER NOT NULL DEFAULT 0,
+  max_possible_score INTEGER NOT NULL DEFAULT 0,
+  current_score INTEGER NOT NULL DEFAULT 0,
+  task_started_at STRING,
+  process_ended_without_pass_or_fail BOOLEAN NOT NULL DEFAULT 0
+);
+INSERT OR IGNORE INTO task_maths_memory (unique_id) VALUES (1);
+SQL
+  echo "Initialized task maths at $db"
+}
+
+ensure_app_schema() {
+  local db="$1"
+  /usr/bin/sqlite3 "$db" <<'SQL'
+CREATE TABLE IF NOT EXISTS app_settings (
+  unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT 1,
+  display_name STRING NOT NULL,
+  trigger_id_type STRING NOT NULL,
+  trigger_id_data STRING NOT NULL,
+  always_blocked BOOLEAN NOT NULL DEFAULT 0,
+  always_discouraged BOOLEAN NOT NULL DEFAULT 1,
+  sensitivity FLOAT NOT NULL DEFAULT 3.0,
+  starting_temperature FLOAT NOT NULL DEFAULT 1.0,
+  heat_rate FLOAT NOT NULL DEFAULT 1.0,
+  cool_rate FLOAT NOT NULL DEFAULT 0.05,
+  seconds_of_usage_before_new_task INTEGER NOT NULL DEFAULT 300,
+  temperature_refresh_interval_in_seconds FLOAT NOT NULL DEFAULT 60.0,
+  heat FLOAT NOT NULL DEFAULT 0.15,
+  task_maths_available BOOLEAN NOT NULL DEFAULT 1,
+  task_lines_available BOOLEAN NOT NULL DEFAULT 1,
+  task_clicks_available BOOLEAN NOT NULL DEFAULT 1,
+  task_count_available BOOLEAN NOT NULL DEFAULT 1,
+  conbustion_possible BOOLEAN NOT NULL DEFAULT 1,
+  can_recover_from_conbustion_possible BOOLEAN NOT NULL DEFAULT 0,
+  conbustion_temp FLOAT NOT NULL DEFAULT 3000.0,
+  recovery_length_in_hours_from_conbustion INTEGER NOT NULL DEFAULT 72
+);
+SQL
+}
+
+add_app() {
+  local group="$1" uid="$2" name="$3" trtype="$4" trdata="$5"
+  local db="$APP_SETTINGS_DIR/${group}.sqlv"
+  ensure_app_schema "$db"
+  /usr/bin/sqlite3 "$db" <<SQL
+INSERT INTO app_settings (display_name, trigger_id_type, trigger_id_data)
+VALUES ('${name//"/""}', '${trtype//"/""}', '${trdata//"/""}');
+SQL
+  echo "Added app '$name' to group '$group' ($db)"
+}
+
+list_apps() {
+  shopt -s nullglob
+  for f in "$APP_SETTINGS_DIR"/*.sqlv; do
+    echo "# $(basename "$f")"
+    /usr/bin/sqlite3 "$f" "SELECT unique_id, display_name, trigger_id_type, trigger_id_data FROM app_settings;"
+  done
+}
+
+cmd="${1:-}"
+case "$cmd" in
+  init)
+    ensure_tree "$APP_SETTINGS_DIR" "$GLOBAL_SETTINGS_DIR" "$GLOBAL_MEM_DIR" "$APP_MEM_DIR" "$TASK_SETTINGS_DIR"
+    init_globals
+    create_task_maths
+    ;;
+  create-task-maths)
+    ensure_tree "$TASK_SETTINGS_DIR"
+    create_task_maths
+    ;;
+  add-app)
+    [ $# -ge 6 ] || { echo "Usage: $0 add-app <group> <unique_id> <display_name> <trigger_type> <trigger_data>"; exit 2; }
+    ensure_tree "$APP_SETTINGS_DIR"
+    add_app "$2" "$3" "$4" "$5" "$6"
+    ;;
+  list-apps)
+    list_apps
+    ;;
+  *)
+    echo "Usage: $0 {init|create-task-maths|add-app|list-apps}"
+    exit 2
+    ;;
+esac
+
