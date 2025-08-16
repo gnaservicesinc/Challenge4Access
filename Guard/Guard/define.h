@@ -46,7 +46,7 @@
 #define APP_SETTINGS_DIR "/opt/c4a/protected/ro/app_settings"
 #endif
 #ifndef APP_MEMORIES_DIR
-#define APP_MEMORIES_DIR "/opt/c4a/protected/memory/app_memories"
+#define APP_MEMORIES_DIR "/opt/c4a/protected/memory/app_mem"
 #endif
 #ifndef GLOBAL_MEMORIES_DIR
 #define GLOBAL_MEMORIES_DIR "/opt/c4a/protected/memory/global_memories"
