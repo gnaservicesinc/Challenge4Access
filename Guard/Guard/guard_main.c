@@ -5,7 +5,7 @@
 //  Created by Andrew Smith on 8/14/25.
 //
 #include "include.h"
-void guard_daemon_loop(void);
+int guard_daemon_loop(void);
 
 
 
@@ -40,8 +40,14 @@ uint32_t crc32(const char* s) {
     }
     return crc ^ 0xffffffff;
 }
-void guard_daemon_loop(void){
+int guard_daemon_loop(void){
+    if (file_exists(AUTHORIZED_TO_EXIT_FILE)) {
+        return(1);
+    }
     sleep(5);
+    if (file_exists(AUTHORIZED_TO_EXIT_FILE)) {
+        return(1);
+    }
     //Pre Loop Checks
     
     //Loops Checks
@@ -51,26 +57,29 @@ void guard_daemon_loop(void){
     // Challanges
     
     //End loop actions
+    return(0);
 }
 
 extern int guard_main(char* fchar){
 
     srand( (unsigned int) time(NULL));
-    change_to_user(OPREATE_AS_USER);
-
+    change_to_user();
+    sleep(1);
     while (!file_exists(AUTHORIZED_TO_EXIT_FILE)) {
-        syslog(LOG_NOTICE, "New Guard Loop.");
+       // guard_notice("New Guard Loop.");
         guard_daemon_loop();
         if (file_exists(AUTHORIZED_TO_EXIT_FILE)) {
-            syslog(LOG_NOTICE, "Shutting down guard.");
+            guard_notice("Shutting down guard.");
             return 0;
         }
-        syslog(LOG_NOTICE, "Sleeping.");
-        sleep(60); // Sleep for 60 seconds
-        syslog(LOG_NOTICE, "Waking up.");
+        sleep(1);
+        // [TODO] set up preprocessor directives to remove this line when --enable-debugging is not set
+        guard_notice("DCYCLE over. Sleeping for C4A_GUARD_DCYCLE_TIME.");
+        sleep(C4A_GUARD_DCYCLE_TIME); // Sleep for C4A_GUARD_DCYCLE_TIME seconds
+        guard_notice("Waking for DCYCLE.");
     }
     
-    syslog(LOG_NOTICE, "Shutting down guard.");
+    guard_notice("Shutting down guard.");
     return ((int) 3);
 }
 bool file_exists(const char *filename)
@@ -81,7 +90,7 @@ void write_dat (const char *myString){
     FILE *fp;
     fp = fopen(_DD_PATH_1_, "wb+");  //    destroy any current contents
    if (fp == NULL) {
-        perror("Error opening file");
+       guard_error("Error opening file for writing");
         exit(EXIT_FAILURE);
     }
     fprintf(fp, "%s", myString);
@@ -92,7 +101,7 @@ char *read_dat (void){
     FILE *fp;
     fp = fopen(_DD_PATH_1_, "rb+");  // open for reading/writing, do not truncate
    if (fp == NULL) {
-        perror("Error opening file");
+       guard_error("Error opening file for reading");
         exit(EXIT_FAILURE);
     }
    int n=0;

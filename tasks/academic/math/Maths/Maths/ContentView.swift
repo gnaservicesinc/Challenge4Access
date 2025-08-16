@@ -262,7 +262,7 @@ struct ContentView: View {
     @EnvironmentObject var model: MathsViewModel
 
     var body: some View {
-<<<<<<< ours
+
         VStack {
             Text(model.question)
             TextField("Answer", text: $model.answerInput)
@@ -274,9 +274,9 @@ struct ContentView: View {
             }
         }
         .padding()
-=======
+
         Text("Maths Task")
->>>>>>> theirs
+
     }
 }
 

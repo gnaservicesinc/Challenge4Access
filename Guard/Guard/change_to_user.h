@@ -8,6 +8,6 @@
 #ifndef change_to_user_h
 #define change_to_user_h
 #include "include.h"
-
-void change_to_user (const char *szUserName);
+void change_to_user (void);
+//void change_to_user (const char *szUserName);
 #endif // !change_to_user_h

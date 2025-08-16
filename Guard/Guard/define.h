@@ -7,9 +7,7 @@
 
 #ifndef DEF_H
 #define DEF_H
-#ifndef OPREATE_AS_USER
-#define OPREATE_AS_USER "ryan"
-#endif
+
 #ifndef C4A_VERSION_MAJOR
 #define C4A_VERSION_MAJOR 1
 #endif
@@ -19,7 +17,6 @@
 #ifndef C4A_VERSION_REVISION
 #define C4A_VERSION_REVISION 13
 #endif
-
 #ifndef C4A_USER
 #define C4A_USER "guard"
 #endif
@@ -29,13 +26,15 @@
 #ifndef C4A_PATH
 #define C4A_PATH "/opt/c4a"
 #endif
+#ifndef C4A_GUARD_DCYCLE_TIME
+#define C4A_GUARD_DCYCLE_TIME 15
+#endif
 #ifndef C4A_TASKS_APPLICATIONS_DIR
 #define C4A_TASKS_APPLICATIONS_DIR  "/opt/c4a/Applications"
 #endif
 #ifndef C4A_PER_TASK_SETTINGS_DIR
 #define C4A_PER_TASK_SETTINGS_DIR "/opt/c4a/protected/ro/task_settings"
 #endif
-
 #ifndef AUTHORIZED_SELF_PATH
 #define AUTHORIZED_SELF_PATH "/opt/c4a/bin/Guard"
 #endif

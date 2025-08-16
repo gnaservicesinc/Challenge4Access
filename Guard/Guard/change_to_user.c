@@ -13,20 +13,26 @@
  * compatibility.
  */
 
-void change_to_user (const char *szUserName)
+volatile sig_atomic_t gSignalStatus;
+void signal_handler(int signal);
+
+
+// void change_to_user (const char *szUserName)
+// Why pass when we know at compile time? Let's hardcode like this
+void change_to_user (void)
 {
   struct passwd *pw;
-
-  pw = getpwnam(szUserName);
+    
+  pw = getpwnam(C4A_USER);
   if (pw != NULL)
   {
     uid_t uid = pw->pw_uid; // we now have the UID of the username
     
-    printf ("UID of user %s is %d\n", szUserName, (int)uid);
+    printf ("UID of user %s is %d\n", C4A_USER, (int)uid);
     if (setuid (uid) != 0)
     {
         print_install_setups_unfinished();
-      perror ("setuid");
+        guard_notice("setiod failed");
     }
     else
     {
@@ -35,11 +41,17 @@ void change_to_user (const char *szUserName)
       // group owned by root as well), and set the SUID bit with:
       //   suid a+s {executable}
     //  printf ("UID is now %d\n", (int)uid);
+     //   guard_notice("Changed user");
+        
     }
   }
   else
   {
+      guard_notice("getpwnam failed");
       print_install_setups_unfinished();
-    perror ("getpwnam");
   }
+}
+void signal_handler(int signal)
+{
+  gSignalStatus = signal;
 }

@@ -14,7 +14,7 @@ void print_install_setups_unfinished(void){
     printf("Privilege setup appears incomplete.\n");
     printf("Ask a system administrator to run:\n");
     printf("  sudo chown %s %s && sudo chmod u+s %s\n",
-           OPREATE_AS_USER,
+           C4A_USER,
            AUTHORIZED_SELF_PATH,
            AUTHORIZED_SELF_PATH);
 }
@@ -76,6 +76,7 @@ void guard_warn(const char Msg[], ...){
     free(strm);
 }
 void guard_notice(const char Msg[], ...){
+#ifdef DEBUG_TOGGLE
     char* strm = (char*) strdup((char*) Msg);
     char* str=strm;
     va_list args;
@@ -87,6 +88,7 @@ void guard_notice(const char Msg[], ...){
     }while (str!=NULL);
     va_end(args);
     free(strm);
+#endif // DEBUG_TOGGLE
 }
 static void guard_log(const char Msg[],int level,bool abort){
     char* strm = (char*) strdup((char*) Msg);
