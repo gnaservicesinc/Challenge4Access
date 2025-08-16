@@ -26,7 +26,7 @@ Score at the end is:
 If grade_tasks is false, any wrong answers will be considered a fail.
 if grade_tasks is true, then so long as min_grade_to_pass is achieved, the user passes. 
 
-
+//Read Only  Settings
 CREATE TABLE task_maths (
 	unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT '1',
 	problems_per_n INTEGER NOT NULL DEFAULT '5',
