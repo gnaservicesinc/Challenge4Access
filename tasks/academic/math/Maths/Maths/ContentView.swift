@@ -1,5 +1,6 @@
 import SwiftUI
 import Foundation
+internal import Combine
 
 enum Operation: CaseIterable {
     case add, sub, mul, div
@@ -167,20 +168,20 @@ final class MathsViewModel: ObservableObject {
         let query = "SELECT problems_per_n, adding_math_problems_allowed, attempts_per_problem, timed, reset_immediatly_on_fail, subtracking_math_problems_allowed, multiplication_math_problems_allowed, division_math_problems_allowed, values_up_to_9_allowed, values_up_to_100_allowed, values_up_to_1000_allowed, max_seconds_per_answer_adding_math_problems, max_seconds_per_answer_subtracking_math_problems, max_seconds_per_answer_multiplication_math_problems, max_seconds_per_answer_division_math_problems FROM task_maths LIMIT 1;"
         let output = runSQLite(dbPath: path, sql: query).trimmingCharacters(in: .whitespacesAndNewlines)
         let parts = output.split(separator: "|").map { String($0) }
-        let problemsPerN = Int(parts[safe:0]) ?? 5
-        let addAllowed = (Int(parts[safe:1]) ?? 1) != 0
-        let attemptsPer = Int(parts[safe:2]) ?? 1
-        let timed = (Int(parts[safe:3]) ?? 1) != 0
-        let reset = (Int(parts[safe:4]) ?? 0) != 0
-        let subAllowed = (Int(parts[safe:5]) ?? 1) != 0
-        let mulAllowed = (Int(parts[safe:6]) ?? 1) != 0
-        let divAllowed = (Int(parts[safe:7]) ?? 1) != 0
-        let up100 = (Int(parts[safe:9]) ?? 1) != 0
-        let up1000 = (Int(parts[safe:10]) ?? 0) != 0
-        let secAdd = Double(parts[safe:11]) ?? 20.0
-        let secSub = Double(parts[safe:12]) ?? 20.0
-        let secMul = Double(parts[safe:13]) ?? 45.0
-        let secDiv = Double(parts[safe:14]) ?? 45.0
+        let problemsPerN = Int(parts[safe:0] ?? "5") ?? 5
+        let addAllowed = (Int(parts[safe:1] ?? "1") ?? 1) != 0
+        let attemptsPer = Int(parts[safe:2] ?? "1") ?? 1
+        let timed = (Int(parts[safe:3] ?? "1") ?? 1) != 0
+        let reset = (Int(parts[safe:4] ?? "0") ?? 0) != 0
+        let subAllowed = (Int(parts[safe:5] ?? "1") ?? 1) != 0
+        let mulAllowed = (Int(parts[safe:6] ?? "1") ?? 1) != 0
+        let divAllowed = (Int(parts[safe:7] ?? "1") ?? 1) != 0
+        let up100 = (Int(parts[safe:9] ?? "1") ?? 1) != 0
+        let up1000 = (Int(parts[safe:10] ?? "0") ?? 0) != 0
+        let secAdd = Double(parts[safe:11] ?? "20.0") ?? 20.0
+        let secSub = Double(parts[safe:12] ?? "20.0") ?? 20.0
+        let secMul = Double(parts[safe:13] ?? "45.0") ?? 45.0
+        let secDiv = Double(parts[safe:14] ?? "45.0") ?? 45.0
         var ops: [Operation] = []
         if addAllowed { ops.append(.add) }
         if subAllowed { ops.append(.sub) }
@@ -216,10 +217,10 @@ final class MathsViewModel: ObservableObject {
         let query = "SELECT current_N_owned_total, current_N_compleated, max_possible_score, current_score FROM task_maths_memory LIMIT 1;"
         let output = runSQLite(dbPath: path, sql: query).trimmingCharacters(in: .whitespacesAndNewlines)
         let parts = output.split(separator: "|").map { String($0) }
-        let total = Int(parts[safe:0]) ?? 0
-        let completed = Int(parts[safe:1]) ?? 0
-        let maxScore = Int(parts[safe:2]) ?? 0
-        let score = Int(parts[safe:3]) ?? 0
+        let total = Int(parts[safe:0] ?? "0") ?? 0
+        let completed = Int(parts[safe:1] ?? "0") ?? 0
+        let maxScore = Int(parts[safe:2] ?? "0") ?? 0
+        let score = Int(parts[safe:3] ?? "0") ?? 0
         return TaskMemory(currentNTotal: total, currentNCompleted: completed, maxPossibleScore: maxScore, currentScore: score)
     }
 
