@@ -1,57 +1,215 @@
 // !$*UTF8*$!
 {
-    archiveVersion = 1;
-    classes = {
-    };
-    objectVersion = 77;
-    objects = {
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
 
 /* Begin PBXFileReference section */
-        CC0000030000000000000003 /* StatusApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC0000030000000000000003 /* StatusApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-        CC0000010000000000000001 /* StatusApp */ = {isa = PBXFileSystemSynchronizedRootGroup; path = StatusApp; sourceTree = "<group>"; };
+		CC0000010000000000000001 /* StatusApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = StatusApp;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-        CC0000070000000000000007 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		CC0000070000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-        CC0000000000000000000000 = {isa = PBXGroup; children = (CC0000010000000000000001 /* StatusApp */, CC0000020000000000000002 /* Products */, ); sourceTree = "<group>"; };
-        CC0000020000000000000002 /* Products */ = {isa = PBXGroup; children = (CC0000030000000000000003 /* StatusApp.app */, ); name = Products; sourceTree = "<group>"; };
+		CC0000000000000000000000 = {
+			isa = PBXGroup;
+			children = (
+				CC0000010000000000000001 /* StatusApp */,
+				CC0000020000000000000002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CC0000020000000000000002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CC0000030000000000000003 /* StatusApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-        CC0000050000000000000005 /* StatusApp */ = {isa = PBXNativeTarget; buildConfigurationList = CC00000C000000000000000C /* Build configuration list for PBXNativeTarget "StatusApp" */; buildPhases = (CC0000060000000000000006 /* Sources */, CC0000070000000000000007 /* Frameworks */, CC0000080000000000000008 /* Resources */, ); buildRules = (); dependencies = (); fileSystemSynchronizedGroups = (CC0000010000000000000001 /* StatusApp */, ); name = StatusApp; productName = StatusApp; productReference = CC0000030000000000000003 /* StatusApp.app */; productType = "com.apple.product-type.application"; };
+		CC0000050000000000000005 /* StatusApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC00000C000000000000000C /* Build configuration list for PBXNativeTarget "StatusApp" */;
+			buildPhases = (
+				CC0000060000000000000006 /* Sources */,
+				CC0000070000000000000007 /* Frameworks */,
+				CC0000080000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CC0000010000000000000001 /* StatusApp */,
+			);
+			name = StatusApp;
+			productName = StatusApp;
+			productReference = CC0000030000000000000003 /* StatusApp.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-        CC0000040000000000000004 /* Project object */ = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 2600; LastUpgradeCheck = 2600; TargetAttributes = {CC0000050000000000000005 = {CreatedOnToolsVersion = 26.0; }; }; }; buildConfigurationList = CC0000090000000000000009 /* Build configuration list for PBXProject "StatusApp" */; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base, ); mainGroup = CC0000000000000000000000; productRefGroup = CC0000020000000000000002 /* Products */; projectDirPath = ""; projectRoot = ""; targets = (CC0000050000000000000005 /* StatusApp */, ); };
+		CC0000040000000000000004 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					CC0000050000000000000005 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = CC0000090000000000000009 /* Build configuration list for PBXProject "StatusApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CC0000000000000000000000;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CC0000020000000000000002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CC0000050000000000000005 /* StatusApp */,
+			);
+		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-        CC0000080000000000000008 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		CC0000080000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-        CC0000060000000000000006 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		CC0000060000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-        CC00000A000000000000000A /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_OBJC_ARC = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MACOSX_DEPLOYMENT_TARGET = 13.0; MARKETING_VERSION = 0.1; PRODUCT_BUNDLE_IDENTIFIER = com.c4a.StatusApp; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = macosx; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; SUPPORTED_PLATFORMS = "macosx"; SUPPORTS_MACCATALYST = NO; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
-        CC00000B000000000000000B /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_OBJC_ARC = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MACOSX_DEPLOYMENT_TARGET = 13.0; MARKETING_VERSION = 0.1; PRODUCT_BUNDLE_IDENTIFIER = com.c4a.StatusApp; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = macosx; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; SUPPORTED_PLATFORMS = "macosx"; SUPPORTS_MACCATALYST = NO; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
-        CC00000D000000000000000D /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_OBJC_ARC = YES; CODE_SIGN_STYLE = Automatic; SDKROOT = macosx; }; name = Debug; };
-        CC00000E000000000000000E /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_OBJC_ARC = YES; CODE_SIGN_STYLE = Automatic; SDKROOT = macosx; }; name = Release; };
+		CC00000A000000000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HL53PRRYAK;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.c4a.StatusApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		CC00000B000000000000000B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HL53PRRYAK;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.c4a.StatusApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		CC00000D000000000000000D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CC00000E000000000000000E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-        CC0000090000000000000009 /* Build configuration list for PBXProject "StatusApp" */ = {isa = XCConfigurationList; buildConfigurations = (CC00000D000000000000000D /* Debug */, CC00000E000000000000000E /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-        CC00000C000000000000000C /* Build configuration list for PBXNativeTarget "StatusApp" */ = {isa = XCConfigurationList; buildConfigurations = (CC00000A000000000000000A /* Debug */, CC00000B000000000000000B /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		CC0000090000000000000009 /* Build configuration list for PBXProject "StatusApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC00000D000000000000000D /* Debug */,
+				CC00000E000000000000000E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC00000C000000000000000C /* Build configuration list for PBXNativeTarget "StatusApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC00000A000000000000000A /* Debug */,
+				CC00000B000000000000000B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
-
-    };
-    rootObject = CC0000040000000000000004 /* Project object */;
+	};
+	rootObject = CC0000040000000000000004 /* Project object */;
 }
-

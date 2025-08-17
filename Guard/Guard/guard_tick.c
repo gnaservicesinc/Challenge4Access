@@ -29,6 +29,20 @@ static time_t parse_iso8601_s(const char *s) {
     return mktime(&tmv);
 }
 
+static double parse_epoch_or_iso(const char *s) {
+    if (!s || !*s) return 0.0;
+    // If numeric, parse as epoch seconds
+    const char *p = s;
+    int digit = 1;
+    while (*p) { if (*p < '0' || *p > '9') { digit = 0; break; } p++; }
+    if (digit) {
+        return strtod(s, NULL);
+    }
+    time_t t = parse_iso8601_s(s);
+    if (t <= 0) return 0.0;
+    return (double)t;
+}
+
 int guard_tick(C4aContext *ctx) {
     if (!ctx) return -1;
     if (ctx->app_count == 0) {
@@ -146,9 +160,30 @@ int guard_tick(C4aContext *ctx) {
             }
         }
 
-        // If not allowed and app is running: block and gate
+        // If not allowed and app is running: possibly grant free open, else block and gate
         if (!app->allowed && !app->memory.burned && !app->memory.burned_forever) {
             if (app->is_running) {
+                // Daily free open if cooled and last free open > 24h ago (trusted epoch)
+                if (app->memory.cooled) {
+                    double nowe = c4a_trusted_epoch_now();
+                    double last = parse_epoch_or_iso(app->memory.date_time_of_last_free_open);
+                    if (last <= 0 || (nowe - last) >= 86400.0) {
+                        app->allowed = 1;
+                        app->allowed_since_mono = tnow;
+                        app->memory.cooled = 0;
+                        app->memory.opens_since_last_cooled += 1;
+                        free(app->memory.last_open_time); app->memory.last_open_time = now_iso8601();
+                        free(app->memory.last_seen_running_timestamp);
+                        app->memory.last_seen_running_timestamp = strdup(app->memory.last_open_time);
+                        app->memory.lifetime_opens += 1;
+                        // Store trusted epoch as integer string
+                        char buf[32]; snprintf(buf, sizeof(buf), "%.0f", nowe);
+                        free(app->memory.date_time_of_last_free_open);
+                        app->memory.date_time_of_last_free_open = strdup(buf);
+                        c4a_save_app_memory(ctx, app);
+                        goto next_app; // Skip blocking/gating
+                    }
+                }
                 if (cnt > 0) { c4a_kill_pids(pids, cnt); }
                 if (app->settings.trigger_id_type && strcasecmp(app->settings.trigger_id_type, "url") == 0) {
                     c4a_block_url(app->settings.trigger_id_data);
@@ -188,6 +223,7 @@ int guard_tick(C4aContext *ctx) {
         }
 
         c4a_save_app_memory(ctx, app);
+next_app:;
     }
 
     if (ambient_n > 0) { ctx->globals.ambient_temp = ambient_sum / (double)ambient_n; }

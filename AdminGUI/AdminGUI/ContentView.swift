@@ -363,7 +363,7 @@ final class AdminViewModel: ObservableObject {
     }
 
     func generateSocial() {
-        ensureDirExists(appDir)
+        ensureDirExists(rulesDir)
         let db = rulesDir.appendingPathComponent("social.sqlv").path
         ensureAppSchema(dbPath: db)
         ["facebook.com", "x.com", "reddit.com"].forEach { domain in
@@ -374,7 +374,7 @@ final class AdminViewModel: ObservableObject {
     }
 
     func generateStreaming() {
-        ensureDirExists(appDir)
+        ensureDirExists(rulesDir)
         // YouTube (web only)
         var db = rulesDir.appendingPathComponent("stream_youtube.sqlv").path
         ensureAppSchema(dbPath: db)
@@ -423,7 +423,9 @@ final class AdminViewModel: ObservableObject {
             if p.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
                 p.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { (item, _) in
                     guard let data = item as? Data, let url = URL(dataRepresentation: data, relativeTo: nil) else { return }
-                    self.importFileURL(url)
+                    Task { @MainActor in
+                        self.importFileURL(url)
+                    }
                 }
                 handled = true
             }
@@ -437,7 +439,9 @@ final class AdminViewModel: ObservableObject {
             if p.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
                 p.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { (item, _) in
                     guard let data = item as? Data, let url = URL(dataRepresentation: data, relativeTo: nil) else { return }
-                    self.addRuleFromFile(url: url)
+                    Task { @MainActor in
+                        self.addRuleFromFile(url: url)
+                    }
                 }
                 handled = true
             }

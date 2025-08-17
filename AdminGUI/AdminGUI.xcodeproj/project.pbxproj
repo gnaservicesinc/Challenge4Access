@@ -1,216 +1,217 @@
 // !$*UTF8*$!
 {
-    archiveVersion = 1;
-    classes = {
-    };
-    objectVersion = 77;
-    objects = {
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
 
 /* Begin PBXFileReference section */
-        AA0000030000000000000003 /* AdminGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdminGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000030000000000000003 /* AdminGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdminGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-        AA0000010000000000000001 /* AdminGUI */ = {
-            isa = PBXFileSystemSynchronizedRootGroup;
-            path = AdminGUI;
-            sourceTree = "<group>";
-        };
+		AA0000010000000000000001 /* AdminGUI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AdminGUI;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-        AA0000070000000000000007 /* Frameworks */ = {
-            isa = PBXFrameworksBuildPhase;
-            buildActionMask = 2147483647;
-            files = (
-            );
-            runOnlyForDeploymentPostprocessing = 0;
-        };
+		AA0000070000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-        AA0000000000000000000000 = {
-            isa = PBXGroup;
-            children = (
-                AA0000010000000000000001 /* AdminGUI */,
-                AA0000020000000000000002 /* Products */,
-            );
-            sourceTree = "<group>";
-        };
-        AA0000020000000000000002 /* Products */ = {
-            isa = PBXGroup;
-            children = (
-                AA0000030000000000000003 /* AdminGUI.app */,
-            );
-            name = Products;
-            sourceTree = "<group>";
-        };
+		AA0000000000000000000000 = {
+			isa = PBXGroup;
+			children = (
+				AA0000010000000000000001 /* AdminGUI */,
+				AA0000020000000000000002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA0000020000000000000002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000030000000000000003 /* AdminGUI.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-        AA0000050000000000000005 /* AdminGUI */ = {
-            isa = PBXNativeTarget;
-            buildConfigurationList = AA00000C000000000000000C /* Build configuration list for PBXNativeTarget "AdminGUI" */;
-            buildPhases = (
-                AA0000060000000000000006 /* Sources */,
-                AA0000070000000000000007 /* Frameworks */,
-                AA0000080000000000000008 /* Resources */,
-            );
-            buildRules = (
-            );
-            dependencies = (
-            );
-            fileSystemSynchronizedGroups = (
-                AA0000010000000000000001 /* AdminGUI */,
-            );
-            name = AdminGUI;
-            productName = AdminGUI;
-            productReference = AA0000030000000000000003 /* AdminGUI.app */;
-            productType = "com.apple.product-type.application";
-        };
+		AA0000050000000000000005 /* AdminGUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA00000C000000000000000C /* Build configuration list for PBXNativeTarget "AdminGUI" */;
+			buildPhases = (
+				AA0000060000000000000006 /* Sources */,
+				AA0000070000000000000007 /* Frameworks */,
+				AA0000080000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA0000010000000000000001 /* AdminGUI */,
+			);
+			name = AdminGUI;
+			productName = AdminGUI;
+			productReference = AA0000030000000000000003 /* AdminGUI.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-        AA0000040000000000000004 /* Project object */ = {
-            isa = PBXProject;
-            attributes = {
-                BuildIndependentTargetsInParallel = 1;
-                LastSwiftUpdateCheck = 2600;
-                LastUpgradeCheck = 2600;
-                TargetAttributes = {
-                    AA0000050000000000000005 = {
-                        CreatedOnToolsVersion = 26.0;
-                    };
-                };
-            };
-            buildConfigurationList = AA0000090000000000000009 /* Build configuration list for PBXProject "AdminGUI" */;
-            developmentRegion = en;
-            hasScannedForEncodings = 0;
-            knownRegions = (
-                en,
-                Base,
-            );
-            mainGroup = AA0000000000000000000000;
-            productRefGroup = AA0000020000000000000002 /* Products */;
-            projectDirPath = "";
-            projectRoot = "";
-            targets = (
-                AA0000050000000000000005 /* AdminGUI */,
-            );
-        };
+		AA0000040000000000000004 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					AA0000050000000000000005 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = AA0000090000000000000009 /* Build configuration list for PBXProject "AdminGUI" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA0000000000000000000000;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = AA0000020000000000000002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA0000050000000000000005 /* AdminGUI */,
+			);
+		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-        AA0000080000000000000008 /* Resources */ = {
-            isa = PBXResourcesBuildPhase;
-            buildActionMask = 2147483647;
-            files = (
-            );
-            runOnlyForDeploymentPostprocessing = 0;
-        };
+		AA0000080000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-        AA0000060000000000000006 /* Sources */ = {
-            isa = PBXSourcesBuildPhase;
-            buildActionMask = 2147483647;
-            files = (
-            );
-            runOnlyForDeploymentPostprocessing = 0;
-        };
+		AA0000060000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-        AA00000A000000000000000A /* Debug */ = {
-            isa = XCBuildConfiguration;
-            buildSettings = {
-                CLANG_ENABLE_OBJC_ARC = YES;
-                CODE_SIGN_STYLE = Automatic;
-                CURRENT_PROJECT_VERSION = 1;
-                GENERATE_INFOPLIST_FILE = YES;
-                INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-                INFOPLIST_KEY_NSHumanReadableCopyright = "C4A Admin";
-                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-                MACOSX_DEPLOYMENT_TARGET = 13.0;
-                MARKETING_VERSION = 0.1;
-                PRODUCT_BUNDLE_IDENTIFIER = com.c4a.AdminGUI;
-                PRODUCT_NAME = "$(TARGET_NAME)";
-                SDKROOT = macosx;
-                SWIFT_EMIT_LOC_STRINGS = YES;
-                SWIFT_VERSION = 5.0;
-                SUPPORTED_PLATFORMS = "macosx";
-                SUPPORTS_MACCATALYST = NO;
-                TARGETED_DEVICE_FAMILY = 1;
-                ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-            };
-            name = Debug;
-        };
-        AA00000B000000000000000B /* Release */ = {
-            isa = XCBuildConfiguration;
-            buildSettings = {
-                CLANG_ENABLE_OBJC_ARC = YES;
-                CODE_SIGN_STYLE = Automatic;
-                CURRENT_PROJECT_VERSION = 1;
-                GENERATE_INFOPLIST_FILE = YES;
-                INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-                INFOPLIST_KEY_NSHumanReadableCopyright = "C4A Admin";
-                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-                MACOSX_DEPLOYMENT_TARGET = 13.0;
-                MARKETING_VERSION = 0.1;
-                PRODUCT_BUNDLE_IDENTIFIER = com.c4a.AdminGUI;
-                PRODUCT_NAME = "$(TARGET_NAME)";
-                SDKROOT = macosx;
-                SWIFT_EMIT_LOC_STRINGS = YES;
-                SWIFT_VERSION = 5.0;
-                SUPPORTED_PLATFORMS = "macosx";
-                SUPPORTS_MACCATALYST = NO;
-                TARGETED_DEVICE_FAMILY = 1;
-                ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-            };
-            name = Release;
-        };
-        AA00000D000000000000000D /* Debug */ = {
-            isa = XCBuildConfiguration;
-            buildSettings = {
-                CLANG_ENABLE_OBJC_ARC = YES;
-                CODE_SIGN_STYLE = Automatic;
-                SDKROOT = macosx;
-            };
-            name = Debug;
-        };
-        AA00000E000000000000000E /* Release */ = {
-            isa = XCBuildConfiguration;
-            buildSettings = {
-                CLANG_ENABLE_OBJC_ARC = YES;
-                CODE_SIGN_STYLE = Automatic;
-                SDKROOT = macosx;
-            };
-            name = Release;
-        };
+		AA00000A000000000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HL53PRRYAK;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "C4A Admin";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.c4a.AdminGUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA00000B000000000000000B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HL53PRRYAK;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "C4A Admin";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.c4a.AdminGUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		AA00000D000000000000000D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		AA00000E000000000000000E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-        AA0000090000000000000009 /* Build configuration list for PBXProject "AdminGUI" */ = {
-            isa = XCConfigurationList;
-            buildConfigurations = (
-                AA00000D000000000000000D /* Debug */,
-                AA00000E000000000000000E /* Release */,
-            );
-            defaultConfigurationIsVisible = 0;
-            defaultConfigurationName = Release;
-        };
-        AA00000C000000000000000C /* Build configuration list for PBXNativeTarget "AdminGUI" */ = {
-            isa = XCConfigurationList;
-            buildConfigurations = (
-                AA00000A000000000000000A /* Debug */,
-                AA00000B000000000000000B /* Release */,
-            );
-            defaultConfigurationIsVisible = 0;
-            defaultConfigurationName = Release;
-        };
+		AA0000090000000000000009 /* Build configuration list for PBXProject "AdminGUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA00000D000000000000000D /* Debug */,
+				AA00000E000000000000000E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA00000C000000000000000C /* Build configuration list for PBXNativeTarget "AdminGUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA00000A000000000000000A /* Debug */,
+				AA00000B000000000000000B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
-
-    };
-    rootObject = AA0000040000000000000004 /* Project object */;
+	};
+	rootObject = AA0000040000000000000004 /* Project object */;
 }
-
