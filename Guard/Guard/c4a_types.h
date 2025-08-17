@@ -17,6 +17,10 @@ typedef struct {
     int early_exit_enforment;
     double early_exit_multiplyer;
     double failed_multiplyer;
+    double burn_warning_ratio;
+    double permanent_burn_reward;
+    double extend_burn_reward_per_hour;
+    double temp_increase_reward_ratio;
 } C4aGlobalSettings;
 
 typedef struct {
@@ -68,6 +72,9 @@ typedef struct {
     int pids_len;
     pid_t pids[64];
     int is_running;
+    double allowed_since_mono;
+    double last_burn_check_mono;
+    double last_warn_mono;
 } C4aApp;
 
 typedef struct {
@@ -81,4 +88,3 @@ void c4a_free_context(C4aContext *ctx);
 C4aContext *c4a_context_new(void);
 
 #endif
-

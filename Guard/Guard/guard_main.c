@@ -123,3 +123,16 @@ char *read_dat (void){
 
 }
 
+void cmp_time()
+{
+    struct timespec ts1;
+    clock_gettime(CLOCK_MONOTONIC, &ts1);
+    sleep(1);
+    struct timespec ts2;
+    clock_gettime(CLOCK_MONOTONIC, &ts2);
+    
+int posix_dur = floor (1000.0 * ts2.tv_sec + 1e-6 * ts2.tv_nsec
+                           - (1000.0 * ts1.tv_sec + 1e-6 * ts1.tv_nsec));
+    
+    printf("\n%i s\n",posix_dur);
+}

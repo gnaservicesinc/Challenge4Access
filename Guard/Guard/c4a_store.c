@@ -63,7 +63,11 @@ static int load_globals_from_db(const char *db_path, C4aGlobalSettings *out) {
         "ambient_temp FLOAT NOT NULL DEFAULT 1.0,"
         "early_exit_enforment BOOLEAN NOT NULL DEFAULT 1,"
         "early_exit_multiplyer FLOAT NOT NULL DEFAULT 10.0,"
-        "failed_multiplyer FLOAT NOT NULL DEFAULT 1.5);";
+        "failed_multiplyer FLOAT NOT NULL DEFAULT 1.5,"
+        "burn_warning_ratio FLOAT NOT NULL DEFAULT 0.9,"
+        "permanent_burn_reward FLOAT NOT NULL DEFAULT 0.5,"
+        "extend_burn_reward_per_hour FLOAT NOT NULL DEFAULT 0.005,"
+        "temp_increase_reward_ratio FLOAT NOT NULL DEFAULT 0.05);";
     rc = sqlite3_exec(db, create_sql, NULL, NULL, NULL);
     if (rc != SQLITE_OK) {
         syslog(LOG_ERR, "global create failed: %d", rc);
@@ -78,14 +82,14 @@ static int load_globals_from_db(const char *db_path, C4aGlobalSettings *out) {
     if (sqlite3_step(st) == SQLITE_ROW) { have = sqlite3_column_int(st, 0); }
     sqlite3_finalize(st);
     if (have == 0) {
-        const char *ins =
-            "INSERT INTO globsl_settings (cycle_frequency_in_seconds,final_multiplier,globaltemp,can_fail_tasks,grade_tasks,min_grade_to_pass,ambient_temp,early_exit_enforment,early_exit_multiplyer,failed_multiplyer)"
-            " VALUES (60,1.05,1.0,1,1,0.95,1.0,1,10.0,1.5)";
+    const char *ins =
+            "INSERT INTO globsl_settings (cycle_frequency_in_seconds,final_multiplier,globaltemp,can_fail_tasks,grade_tasks,min_grade_to_pass,ambient_temp,early_exit_enforment,early_exit_multiplyer,failed_multiplyer,burn_warning_ratio,permanent_burn_reward,extend_burn_reward_per_hour,temp_increase_reward_ratio)"
+            " VALUES (60,1.05,1.0,1,1,0.95,1.0,1,10.0,1.5,0.9,0.5,0.005,0.05)";
         rc = sqlite3_exec(db, ins, NULL, NULL, NULL);
         if (rc != SQLITE_OK) { sqlite3_close(db); return -1; }
     }
     const char *sel =
-        "SELECT cycle_frequency_in_seconds,final_multiplier,globaltemp,can_fail_tasks,grade_tasks,min_grade_to_pass,ambient_temp,early_exit_enforment,early_exit_multiplyer,failed_multiplyer FROM globsl_settings ORDER BY unique_id LIMIT 1";
+        "SELECT cycle_frequency_in_seconds,final_multiplier,globaltemp,can_fail_tasks,grade_tasks,min_grade_to_pass,ambient_temp,early_exit_enforment,early_exit_multiplyer,failed_multiplyer,burn_warning_ratio,permanent_burn_reward,extend_burn_reward_per_hour,temp_increase_reward_ratio FROM globsl_settings ORDER BY unique_id LIMIT 1";
     rc = sqlite3_prepare_v2(db, sel, -1, &st, NULL);
     if (rc != SQLITE_OK) { sqlite3_close(db); return -1; }
     if (sqlite3_step(st) == SQLITE_ROW) {
@@ -99,6 +103,10 @@ static int load_globals_from_db(const char *db_path, C4aGlobalSettings *out) {
         out->early_exit_enforment = sqlite3_column_int(st, 7);
         out->early_exit_multiplyer = sqlite3_column_double(st, 8);
         out->failed_multiplyer = sqlite3_column_double(st, 9);
+        out->burn_warning_ratio = sqlite3_column_double(st, 10);
+        out->permanent_burn_reward = sqlite3_column_double(st, 11);
+        out->extend_burn_reward_per_hour = sqlite3_column_double(st, 12);
+        out->temp_increase_reward_ratio = sqlite3_column_double(st, 13);
     } else {
         sqlite3_finalize(st);
         sqlite3_close(db);

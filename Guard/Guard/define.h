@@ -53,6 +53,21 @@
 #ifndef GLOBAL_SETTINGS_DIR
 #define GLOBAL_SETTINGS_DIR "/opt/c4a/protected/ro/global_settings"
 #endif
+#ifndef REQUESTS_DB_PATH
+#define REQUESTS_DB_PATH "/opt/c4a/protected/com/requests.sqlite"
+#endif
+#ifndef BURN_WARNING_RATIO
+#define BURN_WARNING_RATIO 0.9
+#endif
+#ifndef PERMANENT_BURN_REWARD
+#define PERMANENT_BURN_REWARD 0.5
+#endif
+#ifndef EXTEND_BURN_REWARD_PER_HOUR
+#define EXTEND_BURN_REWARD_PER_HOUR 0.005
+#endif
+#ifndef TEMP_INCREASE_REWARD_RATIO
+#define TEMP_INCREASE_REWARD_RATIO 0.05
+#endif
 #ifndef RAS_USER_MAX_LEN
 #define RAS_USER_MAX_LEN 1024
 #endif

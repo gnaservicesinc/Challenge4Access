@@ -5,11 +5,12 @@
 #include "detection.h"
 #include "guard_tick.h"
 #include "tasks.h"
+#include "c4a_time.h"
+#include "c4a_requests.h"
 
 static double now_seconds(void) {
-    struct timeval tv; gettimeofday(&tv, NULL);
-    return (double)tv.tv_sec + (double)tv.tv_usec / 1e6;
-    }
+    return c4a_mono_now();
+}
 
 static char *now_iso8601(void) {
     time_t t = time(NULL);
@@ -37,6 +38,8 @@ int guard_tick(C4aContext *ctx) {
     double tnow = now_seconds();
 
     double ambient_sum = 0.0; int ambient_n = 0;
+    // Process any user requests first
+    c4a_process_requests(ctx);
     for (size_t i = 0; i < ctx->app_count; ++i) {
         C4aApp *app = ctx->apps[i];
 
@@ -63,6 +66,7 @@ int guard_tick(C4aContext *ctx) {
                 app->memory.last_open_time = now_iso8601();
                 free(app->memory.last_seen_running_timestamp);
                 app->memory.last_seen_running_timestamp = strdup(app->memory.last_open_time);
+                app->allowed_since_mono = tnow;
             }
             if (!app->is_running) {
                 app->allowed = 0;
@@ -71,10 +75,8 @@ int guard_tick(C4aContext *ctx) {
                 free(app->memory.last_seen_running_timestamp);
                 app->memory.last_seen_running_timestamp = ts;
             }
-            if (app->is_running && app->settings.seconds_of_usage_before_new_task > 0 && app->memory.last_open_time) {
-                time_t start = parse_iso8601_s(app->memory.last_open_time);
-                time_t nowt = time(NULL);
-                if (start && (nowt - start) >= app->settings.seconds_of_usage_before_new_task) {
+            if (app->is_running && app->settings.seconds_of_usage_before_new_task > 0) {
+                if (app->allowed_since_mono > 0 && (tnow - app->allowed_since_mono) >= app->settings.seconds_of_usage_before_new_task) {
                     app->allowed = 0;
                     free(app->memory.last_open_time); app->memory.last_open_time = NULL;
                     char *ts = now_iso8601();
@@ -109,6 +111,38 @@ int guard_tick(C4aContext *ctx) {
                 app->memory.burned_forever = 1;
             } else {
                 app->memory.hours_remaining_until_not_burned = (double)app->settings.recovery_length_in_hours_from_conbustion + (double)app->memory.opens_since_last_cooled + (double)app->memory.lifetime_numbr_of_times_burned;
+                app->last_burn_check_mono = tnow;
+            }
+            // Notify user via BurnNotice app if available
+            char cmd[1024];
+            snprintf(cmd, sizeof(cmd), "/usr/bin/open -n -a '/opt/c4a/Applications/BurnNotice.app' --args burned '%s' '%s' '%.2f' '%.2f' '%s'", app->settings.unique_id ?: "", app->settings.display_name ?: "App", app->memory.current_temperature, app->settings.conbustion_temp, app->memory.burned_forever ? "forever" : "temp");
+            system(cmd);
+        }
+
+        // Near-burn warning
+        if (!app->memory.burned && app->settings.conbustion_possible && app->settings.conbustion_temp > 0) {
+            double ratio = app->memory.current_temperature / app->settings.conbustion_temp;
+            double warn_ratio = ctx->globals.burn_warning_ratio > 0 ? ctx->globals.burn_warning_ratio : 0.9;
+            if (ratio >= warn_ratio) {
+                if (tnow - app->last_warn_mono > 60.0) {
+                    char cmdw[1024];
+                    snprintf(cmdw, sizeof(cmdw), "/usr/bin/open -n -a '/opt/c4a/Applications/BurnNotice.app' --args warning '%s' '%s' '%.2f' '%.2f'", app->settings.unique_id ?: "", app->settings.display_name ?: "App", app->memory.current_temperature, app->settings.conbustion_temp);
+                    system(cmdw);
+                    app->last_warn_mono = tnow;
+                }
+            }
+        }
+
+        // Burn recovery countdown based on monotonic time
+        if (app->memory.burned && !app->memory.burned_forever && app->last_burn_check_mono > 0 && app->memory.hours_remaining_until_not_burned > 0.0) {
+            double delta = tnow - app->last_burn_check_mono;
+            if (delta > 0) {
+                app->memory.hours_remaining_until_not_burned -= (delta / 3600.0);
+                if (app->memory.hours_remaining_until_not_burned <= 0.0) {
+                    app->memory.hours_remaining_until_not_burned = 0.0;
+                    app->memory.burned = 0;
+                }
+                app->last_burn_check_mono = tnow;
             }
         }
 
@@ -135,6 +169,7 @@ int guard_tick(C4aContext *ctx) {
                     }
                 } else if (passed) {
                     app->allowed = 1;
+                    app->allowed_since_mono = tnow;
                     app->memory.cooled = 0;
                     app->memory.opens_since_last_cooled += 1;
                     free(app->memory.last_open_time); app->memory.last_open_time = now_iso8601();
@@ -156,5 +191,11 @@ int guard_tick(C4aContext *ctx) {
     }
 
     if (ambient_n > 0) { ctx->globals.ambient_temp = ambient_sum / (double)ambient_n; }
+    // Periodic time sync (hourly)
+    static double last_sync = 0.0;
+    if (last_sync == 0.0 || (tnow - last_sync) >= 3600.0) {
+        c4a_time_sync();
+        last_sync = tnow;
+    }
     return 0;
 }

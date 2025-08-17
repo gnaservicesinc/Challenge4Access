@@ -6,6 +6,8 @@ Guard_SOURCES = \
   change_to_user.c \
   c4a_types.c \
   c4a_store.c \
+  c4a_time.c \
+  c4a_requests.c \
   detection.c \
   tasks.c \
   guard_tick.c \

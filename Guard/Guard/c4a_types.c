@@ -43,6 +43,9 @@ C4aContext *c4a_context_new(void) {
     ctx->globals.early_exit_enforment = 1;
     ctx->globals.early_exit_multiplyer = 10.0;
     ctx->globals.failed_multiplyer = 1.5;
+    ctx->globals.burn_warning_ratio = 0.9;
+    ctx->globals.permanent_burn_reward = 0.5;
+    ctx->globals.extend_burn_reward_per_hour = 0.005;
+    ctx->globals.temp_increase_reward_ratio = 0.05;
     return ctx;
 }
-
