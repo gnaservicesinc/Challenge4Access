@@ -41,6 +41,22 @@ Directory Layout (target)
 - `/opt/c4a/protected/memory/global_memories` → global state (rw).
 - Exit token: `/opt/c4a/protected/com/.g4exit`.
 
+Permissions and ACLs (requests.sqlite)
+- Path: `/opt/c4a/protected/com/requests.sqlite` must be writable by user‑facing UIs (Status, BurnNotice) and readable by Guard.
+- Recommended (group‑based):
+  - `sudo mkdir -p /opt/c4a/protected/com`
+  - `sudo chown guard:guard /opt/c4a/protected/com`
+  - `sudo install -m 0660 /dev/null /opt/c4a/protected/com/requests.sqlite`
+  - Create a group for UI users and grant group write:
+    - `sudo dseditgroup -o create c4a_users` (macOS) or `sudo groupadd c4a_users` (Linux)
+    - `sudo chgrp c4a_users /opt/c4a/protected/com /opt/c4a/protected/com/requests.sqlite`
+    - `sudo chmod 0770 /opt/c4a/protected/com && sudo chmod 0660 /opt/c4a/protected/com/requests.sqlite`
+    - Add each allowed user: `sudo dseditgroup -o edit -a $USER -t user c4a_users`
+- Alternative (per‑user ACL on macOS):
+  - `sudo chmod +a "user:$USER allow read,write,append,file_inherit" /opt/c4a/protected/com`
+  - `sudo chmod +a "user:$USER allow read,write,append" /opt/c4a/protected/com/requests.sqlite`
+- Guard should remain owner (`guard`) and keep restrictive defaults; avoid world‑writable. Ensure parent dir is not deletable by non‑privileged users.
+
 Development Notes
 - For local dev, simulate `/opt/c4a` with a workspace path and override via defines/env until install step exists.
 - Prefer `pgrep -f` for command matching; keep `pgrep` name match simple.
@@ -246,6 +262,5 @@ See These Other REDME files, this list shuold grow as subprojects are added
 /Users/andrewsmith/Desktop/projects/sensuser/Challenge4Access/Challenge4Access/tasks/README
 
 /Users/andrewsmith/Desktop/projects/sensuser/Challenge4Access/Challenge4Access/tasks/academic/math/README
-
 
 

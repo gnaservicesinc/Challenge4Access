@@ -6,6 +6,7 @@ struct ContentView: View {
     @StateObject private var vm = AdminViewModel()
     @State private var newGroupName = ""
     @State private var showDirPicker = false
+    @State private var showGlobalSettings = false
 
     var body: some View {
         NavigationSplitView {
@@ -21,6 +22,12 @@ struct ContentView: View {
                         Spacer()
                         Button("Choose…") { vm.chooseRulesDir() }
                         Button("Open") { vm.revealRulesDirInFinder() }
+                        Button("Import…") { vm.importBundleViaPanel() }
+                        Button("Export") { vm.exportSelectedGroup() }.disabled(vm.selectedGroup == nil)
+                    }
+                    HStack(spacing: 8) {
+                        Button("Global Settings…") { vm.loadGlobalSettings(); showGlobalSettings = true }
+                        Button(role: .destructive) { vm.deleteSelectedGroup() } label: { Text("Delete Group") }.disabled(vm.selectedGroup == nil)
                     }
                 }
                 .padding(.horizontal)
@@ -55,6 +62,12 @@ struct ContentView: View {
                         TableColumn("Type") { Text($0.triggerType) }
                         TableColumn("Data") { Text($0.triggerData) }
                         TableColumn("Tasks") { Text($0.tasksSummary) }
+                        TableColumn("Actions") { row in
+                            HStack {
+                                Button("Edit") { vm.loadFormFrom(uniqueId: row.uniqueId) }
+                                Button(role: .destructive) { vm.deleteRow(uniqueId: row.uniqueId) } label: { Text("Delete") }
+                            }
+                        }
                     }
                 } else {
                     Text("Select a group").foregroundStyle(.secondary)
@@ -123,11 +136,22 @@ struct ContentView: View {
             .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { _ in
                 if vm.autoRescan { vm.generateSteamAndLocal() }
             }
+            .sheet(isPresented: $showGlobalSettings) {
+                GlobalSettingsView(vm: vm)
+                    .frame(minWidth: 420, minHeight: 260)
+            }
         }
     }
 }
 
-struct AppRow: Identifiable, Hashable { let id = UUID(); let displayName: String; let triggerType: String; let triggerData: String; let tasksSummary: String }
+struct AppRow: Identifiable, Hashable {
+    let id: String
+    let uniqueId: String
+    let displayName: String
+    let triggerType: String
+    let triggerData: String
+    let tasksSummary: String
+}
 
 struct AppForm {
     var displayName: String = ""
@@ -155,6 +179,12 @@ final class AdminViewModel: ObservableObject {
     @Published var scanSteam: Bool = UserDefaults.standard.object(forKey: "c4a.scanSteam") as? Bool ?? true { didSet { UserDefaults.standard.set(scanSteam, forKey: "c4a.scanSteam") } }
     @Published var scanUserApps: Bool = UserDefaults.standard.object(forKey: "c4a.scanUserApps") as? Bool ?? true { didSet { UserDefaults.standard.set(scanUserApps, forKey: "c4a.scanUserApps") } }
     @Published var scanSystemApps: Bool = UserDefaults.standard.object(forKey: "c4a.scanSystemApps") as? Bool ?? false { didSet { UserDefaults.standard.set(scanSystemApps, forKey: "c4a.scanSystemApps") } }
+
+    // Global settings
+    @Published var burnWarningRatio: Double = 0.9
+    @Published var permanentBurnReward: Double = 0.5
+    @Published var extendBurnRewardPerHour: Double = 0.005
+    @Published var tempIncreaseRewardRatio: Double = 0.05
 
     private(set) var rulesDir: URL
     private let fileManager = FileManager.default
@@ -211,14 +241,15 @@ final class AdminViewModel: ObservableObject {
         guard let g = selectedGroup else { apps = []; return }
         let db = rulesDir.appendingPathComponent(g + ".sqlv").path
         ensureAppSchema(dbPath: db)
-        let sql = "SELECT display_name, trigger_id_type, trigger_id_data, task_maths_available, task_lines_available, task_clicks_available, task_count_available FROM app_settings;"
+        let sql = "SELECT unique_id, display_name, trigger_id_type, trigger_id_data, task_maths_available, task_lines_available, task_clicks_available, task_count_available FROM app_settings;"
         let out = runSQLite(dbPath: db, sql: sql)
         let rows = out.split(separator: "\n").map { String($0) }
         self.apps = rows.compactMap { line in
             let f = line.split(separator: "|").map(String.init)
-            guard f.count >= 7 else { return nil }
-            let tasks = [ ("M", f[3] == "1"), ("L", f[4] == "1"), ("Ck", f[5] == "1"), ("Ct", f[6] == "1") ].filter { $0.1 }.map { $0.0 }.joined(separator: ",")
-            return AppRow(displayName: f[0], triggerType: f[1], triggerData: f[2], tasksSummary: tasks)
+            guard f.count >= 8 else { return nil }
+            let tasks = [ ("M", f[4] == "1"), ("L", f[5] == "1"), ("Ck", f[6] == "1"), ("Ct", f[7] == "1") ].filter { $0.1 }.map { $0.0 }.joined(separator: ",")
+            let uid = f[0]
+            return AppRow(id: uid, uniqueId: uid, displayName: f[1], triggerType: f[2], triggerData: f[3], tasksSummary: tasks)
         }
     }
 
@@ -230,6 +261,38 @@ final class AdminViewModel: ObservableObject {
         let insert = "INSERT INTO app_settings (display_name, trigger_id_type, trigger_id_data, always_blocked, always_discouraged, seconds_of_usage_before_new_task, task_maths_available, task_lines_available, task_clicks_available, task_count_available) VALUES (\'\(escape(f.displayName))\', \'\(escape(f.triggerType))\', \'\(escape(f.triggerData))\', \(f.alwaysBlocked ? 1:0), \(f.alwaysDiscouraged ? 1:0), \(f.secondsBeforeTask), \(f.taskMaths ? 1:0), \(f.taskLines ? 1:0), \(f.taskClicks ? 1:0), \(f.taskCount ? 1:0));"
         let res = runSQLite(dbPath: db, sql: insert)
         if res.contains("Error") || res.contains("error") { self.message = "Insert may have failed: \(res)" } else { self.message = "Saved" }
+        reloadApps()
+    }
+
+    func loadFormFrom(uniqueId: String) {
+        guard let g = selectedGroup else { return }
+        let db = rulesDir.appendingPathComponent(g + ".sqlv").path
+        ensureAppSchema(dbPath: db)
+        let sql = "SELECT display_name, trigger_id_type, trigger_id_data, always_blocked, always_discouraged, seconds_of_usage_before_new_task, task_maths_available, task_lines_available, task_clicks_available, task_count_available FROM app_settings WHERE unique_id=\(uniqueId) LIMIT 1;"
+        let out = runSQLite(dbPath: db, sql: sql)
+        if let line = out.split(separator: "\n").first {
+            let f = String(line).split(separator: "|").map(String.init)
+            if f.count >= 10 {
+                form.displayName = f[0]
+                form.triggerType = f[1]
+                form.triggerData = f[2]
+                form.alwaysBlocked = (f[3] == "1")
+                form.alwaysDiscouraged = (f[4] == "1")
+                form.secondsBeforeTask = Int(f[5]) ?? form.secondsBeforeTask
+                form.taskMaths = (f[6] == "1")
+                form.taskLines = (f[7] == "1")
+                form.taskClicks = (f[8] == "1")
+                form.taskCount = (f[9] == "1")
+            }
+        }
+    }
+
+    func deleteRow(uniqueId: String) {
+        guard let g = selectedGroup else { return }
+        let db = rulesDir.appendingPathComponent(g + ".sqlv").path
+        ensureAppSchema(dbPath: db)
+        let sql = "DELETE FROM app_settings WHERE unique_id=\(uniqueId);"
+        _ = runSQLite(dbPath: db, sql: sql)
         reloadApps()
     }
 
@@ -261,6 +324,65 @@ final class AdminViewModel: ObservableObject {
         );
         """
         _ = runSQLite(dbPath: dbPath, sql: create)
+    }
+
+    // MARK: - Globals (burn thresholds/rewards)
+    private func ensureGlobalSchema(dbPath: String) {
+        let create = """
+        CREATE TABLE IF NOT EXISTS globsl_settings (
+          unique_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL DEFAULT 1,
+          cycle_frequency_in_seconds INTEGER NOT NULL,
+          final_multiplier FLOAT NOT NULL DEFAULT 1.05,
+          globaltemp FLOAT NOT NULL DEFAULT 1.0,
+          can_fail_tasks BOOLEAN NOT NULL DEFAULT 1,
+          grade_tasks BOOLEAN NOT NULL DEFAULT 1,
+          min_grade_to_pass FLOAT NOT NULL DEFAULT 0.95,
+          ambient_temp FLOAT NOT NULL DEFAULT 1.0,
+          early_exit_enforment BOOLEAN NOT NULL DEFAULT 1,
+          early_exit_multiplyer FLOAT NOT NULL DEFAULT 10.0,
+          failed_multiplyer FLOAT NOT NULL DEFAULT 1.5,
+          burn_warning_ratio FLOAT NOT NULL DEFAULT 0.9,
+          permanent_burn_reward FLOAT NOT NULL DEFAULT 0.5,
+          extend_burn_reward_per_hour FLOAT NOT NULL DEFAULT 0.005,
+          temp_increase_reward_ratio FLOAT NOT NULL DEFAULT 0.05
+        );
+        INSERT OR IGNORE INTO globsl_settings (unique_id,cycle_frequency_in_seconds) VALUES (1,60);
+        """
+        _ = runSQLite(dbPath: dbPath, sql: create)
+    }
+
+    private var globalsDir: URL { URL(fileURLWithPath: "/opt/c4a/protected/ro/global_settings") }
+    private var globalsDB: String { globalsDir.appendingPathComponent("global.sqlite").path }
+
+    func loadGlobalSettings() {
+        ensureDirExists(globalsDir)
+        ensureGlobalSchema(dbPath: globalsDB)
+        let sql = "SELECT burn_warning_ratio, permanent_burn_reward, extend_burn_reward_per_hour, temp_increase_reward_ratio FROM globsl_settings ORDER BY unique_id LIMIT 1;"
+        let out = runSQLite(dbPath: globalsDB, sql: sql)
+        if let line = out.split(separator: "\n").first {
+            let f = String(line).split(separator: "|").map(String.init)
+            if f.count >= 4 {
+                burnWarningRatio = Double(f[0]) ?? burnWarningRatio
+                permanentBurnReward = Double(f[1]) ?? permanentBurnReward
+                extendBurnRewardPerHour = Double(f[2]) ?? extendBurnRewardPerHour
+                tempIncreaseRewardRatio = Double(f[3]) ?? tempIncreaseRewardRatio
+            }
+        }
+    }
+
+    func saveGlobalSettings() {
+        ensureDirExists(globalsDir)
+        ensureGlobalSchema(dbPath: globalsDB)
+        let sql = """
+        UPDATE globsl_settings
+        SET burn_warning_ratio=\(burnWarningRatio),
+            permanent_burn_reward=\(permanentBurnReward),
+            extend_burn_reward_per_hour=\(extendBurnRewardPerHour),
+            temp_increase_reward_ratio=\(tempIncreaseRewardRatio)
+        WHERE unique_id=(SELECT unique_id FROM globsl_settings ORDER BY unique_id LIMIT 1);
+        """
+        _ = runSQLite(dbPath: globalsDB, sql: sql)
+        self.message = "Global settings saved"
     }
 
     func runSQLite(dbPath: String, sql: String) -> String {
@@ -481,5 +603,83 @@ final class AdminViewModel: ObservableObject {
             insertTrigger(db: db, name: name, type: "command", data: url.path)
         }
         DispatchQueue.main.async { self.message = "Added rule for \(name)"; self.reloadApps() }
+    }
+
+    // MARK: - Import/Export helpers
+    func importBundleViaPanel() {
+        let panel = NSOpenPanel()
+        panel.allowedFileTypes = ["sqlv"]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        if panel.runModal() == .OK, let url = panel.url { importFileURL(url) }
+    }
+
+    func exportSelectedGroup() {
+        guard let g = selectedGroup else { return }
+        let src = rulesDir.appendingPathComponent(g + ".sqlv")
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = src.lastPathComponent
+        if panel.runModal() == .OK, let dest = panel.url {
+            do { if fileManager.fileExists(atPath: dest.path) { try fileManager.removeItem(at: dest) }; try fileManager.copyItem(at: src, to: dest); self.message = "Exported to \(dest.lastPathComponent)" } catch { self.message = "Export failed: \(error.localizedDescription)" }
+        }
+    }
+
+    func deleteSelectedGroup() {
+        guard let g = selectedGroup else { return }
+        let path = rulesDir.appendingPathComponent(g + ".sqlv").path
+        do {
+            try fileManager.removeItem(atPath: path)
+            self.message = "Deleted group \(g)"
+            reloadGroups(); reloadApps()
+        } catch {
+            self.message = "Delete failed: \(error.localizedDescription)"
+        }
+    }
+}
+
+struct GlobalSettingsView: View {
+    @ObservedObject var vm: AdminViewModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Global Settings").font(.title2)
+            Form {
+                HStack {
+                    Text("Burn warning ratio")
+                    Spacer()
+                    TextField("0.9", value: $vm.burnWarningRatio, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 120)
+                }
+                HStack {
+                    Text("Permanent burn reward")
+                    Spacer()
+                    TextField("0.5", value: $vm.permanentBurnReward, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 120)
+                }
+                HStack {
+                    Text("Extend burn reward / hr")
+                    Spacer()
+                    TextField("0.005", value: $vm.extendBurnRewardPerHour, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 120)
+                }
+                HStack {
+                    Text("Temp increase reward ratio")
+                    Spacer()
+                    TextField("0.05", value: $vm.tempIncreaseRewardRatio, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 120)
+                }
+            }
+            HStack {
+                Button("Reload") { vm.loadGlobalSettings() }
+                Button("Save") { vm.saveGlobalSettings() }
+                Spacer()
+            }
+        }
+        .padding()
+        .onAppear { vm.loadGlobalSettings() }
     }
 }
